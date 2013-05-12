@@ -50,5 +50,5 @@ OpenShift
 ===============
 
 The Code is currently deployed to OpenShift
-http://econceptstore-econcept.rhcloud.com
+http://econcept-econcept.rhcloud.com/econceptstorage/
 
