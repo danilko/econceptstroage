@@ -49,7 +49,15 @@
                 lProgress.html(lPercentValue);
             },  // beforeSend: function
             complete: function (pXHR) {
-                $('#result').html(pXHR.responseText);
+            	var lJSONObject = jQuery.parseJSON(pXHR.responseText)
+                $('#result').append('<p>' + lJSONObject.status + '</p>');
+                $('#result').append('<p>' + lJSONObject.statusmessage + '</p>');
+                
+                if(lJSONObject.status=='success')
+                {
+                	lProgress.html('100% Complete');
+                }  // if
+            	$('#result').html('');
             }  // complete: function
         });  // $('form').ajaxForm
     });  // $(document).ready(function(){})
