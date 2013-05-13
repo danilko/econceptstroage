@@ -56,6 +56,7 @@
                 if(lJSONObject.status=='success')
                 {
                 	lProgress.html('100% Complete');
+                	getFileList();
                 }  // if
             	$('#result').html('');
             }  // complete: function
