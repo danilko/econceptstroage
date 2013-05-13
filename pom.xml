@@ -5,8 +5,7 @@
 	<artifactId>econceptstorage</artifactId>
 	<packaging>war</packaging>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>EconceptRest Maven Webapp</name>
-	<url>http://maven.apache.org</url>
+	<name>Econcept Storage Maven Webapp</name>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -53,6 +52,6 @@
 
 	</dependencies>
 	<build>
+	    <finalName>${project.artifactId}</finalName>
 	</build>
-
 </project>

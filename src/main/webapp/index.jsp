@@ -213,6 +213,19 @@
 
             <!-- Main hero unit for a primary marketing message or call to action -->
             <div class="hero-unit">
+                <h1>THIS IS AN EXPERIMENT SITE</h1>
+                <p>AGREEMENT:</p>
+                <p>THIS IS AN EXPERMINTE SITE, PLEASE DO NOT UPLOAD ANY SENSITIVE INFORMATION</p>
+                <p>THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.</p>
+<p>BY USING THE SERVICE, YOU AGREE TO THIS AGREEMENT</p>
+            </div>
+            <div class="hero-unit">
                 <h1>Hello, admin</h1>
                 <p id = "message"/></p>
                 <p>Current Uploaded Files:</p>
