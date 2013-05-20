@@ -41,8 +41,8 @@ Environment Variable DATA_DIR must be present and point to a writable location i
 
 TODO
 ===============
-<p>Design Database for user authentication and files/users linking</p>
-<p>Clean up code documentation</p>
+Design Database for user authentication and files/users linking
+Clean up code documentation
 ===============
 
 

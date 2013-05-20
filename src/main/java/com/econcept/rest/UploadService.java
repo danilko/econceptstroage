@@ -32,12 +32,14 @@
 package com.econcept.rest;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -48,10 +50,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 
 import org.apache.commons.io.FileUtils;
-import org.codehaus.jettison.json.JSONObject;
+import org.apache.cxf.jaxrs.ext.multipart.Attachment;
+import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.apache.sling.commons.json.JSONObject;
 
-import com.sun.jersey.core.header.FormDataContentDisposition;
-import com.sun.jersey.multipart.FormDataParam;
 
 /**
  * 
@@ -287,13 +289,9 @@ public class UploadService
 	 * <p>uploadwithuri</p>
 	 * <p>Upload a file using user inputed uri and owned by the user</p>
 	 * 
-	 * @param pMessage <p>The JSON message string that contains user information, 
-	 *            and the file name for the file to retrieve</p>
-	 *           <p>JSON parameters and their values</p>
-	 *           <p>user type = string</p>
-	 *           <p>The username for the user</p>
-	 *           <p>parameter type = string</p>
-	 *           <p>The uri for the file to be downloaded</p>
+	 * @param pMessage <p>Form Parameters to upload file as multipart</p>
+	 *           <p>file type=form-data</p>
+	 *           <p>The mulitpart form data that represents the uploaded data</p>
 	 * @return String in JSON format
 	 *           <p>JSON parameters and their values</p>
 	 *           <p>status type = string</p>
@@ -305,15 +303,15 @@ public class UploadService
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public String upload(
-			@FormDataParam("file") InputStream pUploadedInputStream,
-			@FormDataParam("file") FormDataContentDisposition pFileDetail)
+			@Multipart(value = "file") Attachment pAttachment,
+			@Multipart(value = "file") InputStream pUploadedFileInputStream)
 	{
 		// User is admin now, need to change to be able to read user info from form
 		String lUser = "admin";
 		// Set the file output path and convert to UNIX format
 		File lFile = new File(System.getenv("DATA_DIR").toString()
 				.replace("\\", "/")
-				+ "/" + lUser + "/" + "/" + pFileDetail.getFileName());
+				+ "/" + lUser + "/" + "/" + pAttachment.getContentDisposition().getParameter("filename"));
 		try
 		{
 			// Retrieve output stream through multipart data
@@ -322,13 +320,16 @@ public class UploadService
 			// Set the upload threshold to 1 KB for every read
 			byte[] lBytes = new byte[1024];
 			// Write while read from form data
-			while ((lRead = pUploadedInputStream.read(lBytes)) != -1)
+			while ((lRead = pUploadedFileInputStream.read(lBytes)) != -1)
 			{
 				lOutputStream.write(lBytes, 0, lRead);
 			} // while
 
 			lOutputStream.flush();
 			lOutputStream.close();
+			
+			pUploadedFileInputStream .close();
+			
 			return "{\"status\": \"" + "success" + "\"}";
 		} // try
 		catch (Exception pException)
