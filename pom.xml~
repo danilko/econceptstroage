@@ -4,7 +4,8 @@
 	<groupId>com.econcept.rest</groupId>
 	<artifactId>econceptstorage</artifactId>
 	<packaging>war</packaging>
-	<version>0.0.1</version>
+	<version>0.0.1-SNAPSHOT</version>
+	<name>Econcept Storage Maven Webapp</name>
 	<licenses>
 		<license>
 			<!-- The MIT License (MIT) Copyright (c) 2013 Kai-Ting (Danil) Ko Permission 
@@ -50,11 +51,6 @@
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-orm</artifactId>
 			<version>${spring.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.springframework.data</groupId>
-			<artifactId>spring-data-jpa</artifactId>
-			<version>1.3.2.RELEASE</version>
 		</dependency>
 
 		<!-- Appache CXF Framework -->
@@ -140,36 +136,5 @@
 				</dependencies>
 			</plugin>
 		</plugins>
-		<!-- M2Eclipse Plugin Management to ignore OPENJPA Plugin - It will not effect normal maven executions -->
-		<pluginManagement>
-			<plugins>
-				<plugin>
-					<groupId>org.eclipse.m2e</groupId>
-					<artifactId>lifecycle-mapping</artifactId>
-					<version>1.0.0</version>
-					<configuration>
-						<lifecycleMappingMetadata>
-							<pluginExecutions>
-								<pluginExecution>
-									<pluginExecutionFilter>
-										<groupId>org.apache.openjpa</groupId>
-										<artifactId>openjpa-maven-plugin</artifactId>
-										<versionRange>[1.0.0,)</versionRange>
-										<goals>
-											<goal>enhance</goal>
-										</goals>
-									</pluginExecutionFilter>
-									<action>
-										<execute>
-											<runOnIncremental>false</runOnIncremental>
-										</execute>
-									</action>
-								</pluginExecution>
-							</pluginExecutions>
-						</lifecycleMappingMetadata>
-					</configuration>
-				</plugin>
-			</plugins>
-		</pluginManagement>
 	</build>
 </project>
