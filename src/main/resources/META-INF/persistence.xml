@@ -1,8 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<persistence version="2.0">
-	<persistence-unit name="openjpa">
-		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl
-		</provider>
-		<class>com.econcept.dao.AccountDAOImpl</class>
+<persistence version="2.0"
+	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
+	<persistence-unit name="entityManagerFactory"
+		transaction-type="RESOURCE_LOCAL">
+		<description>OpenJPA Persist Unit</description>
+		<class>com.econcept.entities.Account</class>
+     <properties>
+     <property name="openjpa.ConnectionProperties" value="DriverClassName=org.postgresql.Driver, Url=jdbc:postgresql://localhost:5432/postgres, Username=postgres, Password=postgresql"/>
+     <!-- <property name="openjpa.ConnectionURL" value="jdbc:postgresql://localhost:5432/postgres"/>
+       <property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/> 
+      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>-->
+      <property name="openjpa.ConnectionDriverName" 
+        value="org.apache.commons.dbcp.BasicDataSource"/>
+    </properties>
 	</persistence-unit>
 </persistence>

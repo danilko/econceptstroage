@@ -67,20 +67,20 @@ public class UploadService
 {
 
 	/**
-	 * <h1>getFileList</h1>
+	 * 
 	 * <p>Get the all files that owned by the user according to the user information</p>
 	 * 
 	 * @param pMessage <p>The JSON message string that contains user information, 
 	 *            and the file name for the file to retrieve</p>
 	 *           <p>JSON parameters and their values</p>
-	 *           <p>user type = string</p>
-	 *           <p>The username for the user</p>
+	 *           <p>account_id type = string</p>
+	 *           <p>The account id for the account</p>
 	 *           <p>parameter type = string</p>
 	 *           <p>The file name for the file to be deleted</p>
 	 * @return String in JSON format
 	 *           <p>JSON parameters and their values</p>
 	 *           <p>status type = string</p>
-	 *           <p>The username for the user</p>
+	 *           <p>The status result for the operation</p>
 	 *           <p>statusmessage type = string/string array</p>
 	 *           <p>The status message to log detail information about operation</p>
 	 */
@@ -92,12 +92,12 @@ public class UploadService
 		{
 			JSONObject lObject = new JSONObject(pMessage);
 
-			String lUser = lObject.getString("user");
+			String lAccountID = lObject.getString("accout_id");
 
 			// Convert data dir to UNIX like path to eliminate possible errors
 			File lFolder = new File(System.getenv("DATA_DIR").toString()
 					.replace("\\", "/")
-					+ "/" + lUser);
+					+ "/" + lAccountID);
 			// Retrieve all files from file lists
 			File[] lFileList = lFolder.listFiles();
 
@@ -126,7 +126,6 @@ public class UploadService
 			
 			return "{\"status\": \"success\",\"statusmessage\": "
 					+ lBuilder.toString() + "}";
-
 		} // try
 		catch (Exception pException)
 		{
@@ -138,7 +137,7 @@ public class UploadService
 	} // String getFileList
 
 	/**
-	 * <h1>getFile</h1>
+	 * 
 	 * <p>Retrieve the particular file according to user information</p>
 	 * 
 	 * @param @QueryParam("user") String pUser The user name for the user
@@ -176,20 +175,19 @@ public class UploadService
 
 	/**
 	 * 
-	 * <p>deleteFile</p>
 	 * <p>Delete particular file owned by the user</p>
 	 * 
 	 * @param pMessage <p>The JSON message string that contains user information, 
 	 *            and the file name for the file to retrieve</p>
 	 *           <p>JSON parameters and their values</p>
-	 *           <p>user type = string</p>
-	 *           <p>The username for the user</p>
+	 *           <p>account_id type = string</p>
+	 *           <p>The account_id for the account</p>
 	 *           <p>parameter type = string</p>
 	 *           <p>The file name for the file to be deleted</p>
 	 * @return String in JSON format
 	 *           <p>JSON parameters and their values</p>
 	 *           <p>status type = string</p>
-	 *           <p>The username for the user</p>
+	 *           <p>The status result for the operation</p>
 	 *           <p>statusmessage type = string/string array</p>
 	 *           <p>The status message to log detail information about operation</p>
 	 */
@@ -203,13 +201,13 @@ public class UploadService
 			JSONObject lObject = new JSONObject(pMessage);
 
 			// Retrieve username
-			String lUser = lObject.getString("user");
+			String lAccount = lObject.getString("account_id");
 
 			// Set the file path, convert to UNIX format
 			String lFileName = lObject.getString("parameter");
 			File lFile = new File(System.getenv("DATA_DIR").toString()
 					.replace("\\", "/")
-					+ "/" + lUser + "/" + "/" + lFileName);
+					+ "/" + lAccount + "/" + "/" + lFileName);
 
 			// Remove the file
 			lFile.delete();
@@ -228,20 +226,19 @@ public class UploadService
 
 	/**
 	 * 
-	 * <p>uploadwithuri</p>
 	 * <p>Upload a file using user inputed uri and owned by the user</p>
 	 * 
 	 * @param pMessage <p>The JSON message string that contains user information, 
 	 *            and the file name for the file to retrieve</p>
 	 *           <p>JSON parameters and their values</p>
-	 *           <p>user type = string</p>
-	 *           <p>The username for the user</p>
+	 *           <p>account_id type = string</p>
+	 *           <p>The account id for the account</p>
 	 *           <p>parameter type = string</p>
 	 *           <p>The uri for the file to be downloaded</p>
 	 * @return String in JSON format
 	 *           <p>JSON parameters and their values</p>
 	 *           <p>status type = string</p>
-	 *           <p>The username for the user</p>
+	 *           <p>The status result for the operation</p>
 	 *           <p>statusmessage type = string/string array</p>
 	 *           <p>The status message to log detail information about operation</p>
 	 */
@@ -254,7 +251,7 @@ public class UploadService
 			// Convert to JSON object
 			JSONObject lObject = new JSONObject(pMessage);
 
-			String lUser = lObject.getString("user");
+			String lAccount = lObject.getString("account_id");
 
 			// Analysis uri to try to find file name
 			String[] lURLSplit = lObject.getString("parameter").split("/");
@@ -263,7 +260,7 @@ public class UploadService
 			// Set the output file and conver to UNIX styles
 			File lFile = new File(System.getenv("DATA_DIR").toString()
 					.replace("\\", "/")
-					+ "/" + lUser + "/" + "/" + lFileName);
+					+ "/" + lAccount + "/" + "/" + lFileName);
 			
 			// Set the URL to download files from
 			URL lURL = new URL(lObject.getString("parameter"));
@@ -284,10 +281,14 @@ public class UploadService
 
 	/**
 	 * 
-	 * <p>uploadwithuri</p>
 	 * <p>Upload a file using user inputed uri and owned by the user</p>
 	 * 
-	 * @param pMessage <p>Form Parameters to upload file as multipart</p>
+	 * @param pAttachment 
+	 *           <p>Form Parameters to upload file as multipart and cast as Attachment to retrieve file information</p>
+	 *           <p>file type=form-data</p>
+	 *           <p>The mulitpart form data that represents the uploaded data</p>
+	 * @param pAttachment 
+	 *           <p>Form Parameters to upload file as multipart and cast as InputStream to retrieve file content as input stream</p>
 	 *           <p>file type=form-data</p>
 	 *           <p>The mulitpart form data that represents the uploaded data</p>
 	 * @return String in JSON format
@@ -301,15 +302,15 @@ public class UploadService
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public String upload(
+			@Multipart(value = "account_id") String pAccountID,
 			@Multipart(value = "file") Attachment pAttachment,
 			@Multipart(value = "file") InputStream pUploadedFileInputStream)
 	{
-		// User is admin now, need to change to be able to read user info from form
-		String lUser = "admin";
+		String lAccount = pAccountID;
 		// Set the file output path and convert to UNIX format
 		File lFile = new File(System.getenv("DATA_DIR").toString()
 				.replace("\\", "/")
-				+ "/" + lUser + "/" + "/" + pAttachment.getContentDisposition().getParameter("filename"));
+				+ "/" + lAccount + "/" + "/" + pAttachment.getContentDisposition().getParameter("filename"));
 		try
 		{
 			// Retrieve output stream through multipart data

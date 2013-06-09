@@ -11,8 +11,10 @@ http://cxf.apache.org/schemas/jaxrs.xsd">
   <jaxrs:server id="restServices" address="/">
     <jaxrs:serviceBeans>
       <ref bean="uploadService" />
+      <ref bean="accountService" />
     </jaxrs:serviceBeans>
   </jaxrs:server>
 
   <bean id="uploadService" class="com.econcept.webservice.rest.UploadService" />
+   <bean id="accountService" class="com.econcept.webservice.rest.AccountService" />
 </beans>
