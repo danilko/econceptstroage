@@ -32,7 +32,6 @@ package com.econcept.dao;
 
 import java.util.List;
 
-import javax.persistence.Column;
 import javax.persistence.EntityManager;
 
 import com.econcept.entities.Account;

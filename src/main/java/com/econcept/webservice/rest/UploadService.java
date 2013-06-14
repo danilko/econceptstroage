@@ -65,7 +65,8 @@ import org.apache.sling.commons.json.JSONObject;
 @Consumes(MediaType.APPLICATION_JSON)
 public class UploadService
 {
-
+	public final static String ACCOUNT_ID="account_id";
+	public final static String DATA_DIR="DATA_DIR";
 	/**
 	 * 
 	 * <p>Get the all files that owned by the user according to the user information</p>
@@ -92,10 +93,10 @@ public class UploadService
 		{
 			JSONObject lObject = new JSONObject(pMessage);
 
-			String lAccountID = lObject.getString("accout_id");
+			String lAccountID = lObject.getString(ACCOUNT_ID);
 
 			// Convert data dir to UNIX like path to eliminate possible errors
-			File lFolder = new File(System.getenv("DATA_DIR").toString()
+			File lFolder = new File(System.getenv(DATA_DIR).toString()
 					.replace("\\", "/")
 					+ "/" + lAccountID);
 			// Retrieve all files from file lists
@@ -147,7 +148,7 @@ public class UploadService
 	@GET
 	@Path("/getfile")
 	@Produces("application/data")
-	public Response getFile(@QueryParam("user") String pUser,
+	public Response getFile(@QueryParam(ACCOUNT_ID) String pUser,
 			@QueryParam("filename") String pFileName)
 	{
 		try
@@ -155,7 +156,7 @@ public class UploadService
 
 			// Retrieve the file through user information, convert to UNIX format to eliminate
 			// possible errors
-			File lFile = new File(System.getenv("DATA_DIR").toString()
+			File lFile = new File(System.getenv(DATA_DIR).toString()
 					.replace("\\", "/")
 					+ "/" + pUser + "/" + "/" + pFileName);
 
@@ -201,11 +202,11 @@ public class UploadService
 			JSONObject lObject = new JSONObject(pMessage);
 
 			// Retrieve username
-			String lAccount = lObject.getString("account_id");
+			String lAccount = lObject.getString(ACCOUNT_ID);
 
 			// Set the file path, convert to UNIX format
 			String lFileName = lObject.getString("parameter");
-			File lFile = new File(System.getenv("DATA_DIR").toString()
+			File lFile = new File(System.getenv(DATA_DIR).toString()
 					.replace("\\", "/")
 					+ "/" + lAccount + "/" + "/" + lFileName);
 
@@ -251,14 +252,14 @@ public class UploadService
 			// Convert to JSON object
 			JSONObject lObject = new JSONObject(pMessage);
 
-			String lAccount = lObject.getString("account_id");
+			String lAccount = lObject.getString(ACCOUNT_ID);
 
 			// Analysis uri to try to find file name
 			String[] lURLSplit = lObject.getString("parameter").split("/");
 			String lFileName = lURLSplit[lURLSplit.length - 1];
 			
 			// Set the output file and conver to UNIX styles
-			File lFile = new File(System.getenv("DATA_DIR").toString()
+			File lFile = new File(System.getenv(DATA_DIR).toString()
 					.replace("\\", "/")
 					+ "/" + lAccount + "/" + "/" + lFileName);
 			
@@ -282,14 +283,17 @@ public class UploadService
 	/**
 	 * 
 	 * <p>Upload a file using user inputed uri and owned by the user</p>
-	 * 
+	 * @param pAccountID
+	 *           <p>Form Parameters for account id</p>
+	 *           <p>txtAccountID type=form-data</p>
+	 *           <p>The mulitpart form data that represents the uploaded data</p>
 	 * @param pAttachment 
 	 *           <p>Form Parameters to upload file as multipart and cast as Attachment to retrieve file information</p>
-	 *           <p>file type=form-data</p>
+	 *           <p>fileUploadFile type=form-data</p>
 	 *           <p>The mulitpart form data that represents the uploaded data</p>
 	 * @param pAttachment 
 	 *           <p>Form Parameters to upload file as multipart and cast as InputStream to retrieve file content as input stream</p>
-	 *           <p>file type=form-data</p>
+	 *           <p>fileUploadFile type=form-data</p>
 	 *           <p>The mulitpart form data that represents the uploaded data</p>
 	 * @return String in JSON format
 	 *           <p>JSON parameters and their values</p>
@@ -302,13 +306,14 @@ public class UploadService
 	@Path("/upload")
 	@Consumes(MediaType.MULTIPART_FORM_DATA)
 	public String upload(
-			@Multipart(value = "account_id") String pAccountID,
-			@Multipart(value = "file") Attachment pAttachment,
-			@Multipart(value = "file") InputStream pUploadedFileInputStream)
+			@Multipart("fileUploadFile") Attachment pAttachment,
+			@Multipart("fileUploadFile") InputStream pUploadedFileInputStream)
 	{
-		String lAccount = pAccountID;
+		// A temporary hack to hard coded admintest, need to come up with proper solutions
+		// The problem seem that multipart cannot mix file with text
+		String lAccount = "admintest";
 		// Set the file output path and convert to UNIX format
-		File lFile = new File(System.getenv("DATA_DIR").toString()
+		File lFile = new File(System.getenv(DATA_DIR).toString()
 				.replace("\\", "/")
 				+ "/" + lAccount + "/" + "/" + pAttachment.getContentDisposition().getParameter("filename"));
 		try

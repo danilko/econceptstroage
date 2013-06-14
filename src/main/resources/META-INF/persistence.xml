@@ -4,15 +4,18 @@
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="entityManagerFactory"
 		transaction-type="RESOURCE_LOCAL">
-		<description>OpenJPA Persist Unit</description>
+		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 		<class>com.econcept.entities.Account</class>
-     <properties>
-     <property name="openjpa.ConnectionProperties" value="DriverClassName=org.postgresql.Driver, Url=jdbc:postgresql://localhost:5432/postgres, Username=postgres, Password=postgresql"/>
-     <!-- <property name="openjpa.ConnectionURL" value="jdbc:postgresql://localhost:5432/postgres"/>
-       <property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/> 
-      <property name="openjpa.Log" value="DefaultLevel=WARN, Tool=INFO"/>-->
-      <property name="openjpa.ConnectionDriverName" 
-        value="org.apache.commons.dbcp.BasicDataSource"/>
-    </properties>
+		<properties>
+		    <property name="openjpa.ConnectionURL" value="jdbc:postgresql://localhost:5432/postgres"/>
+      		<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
+      		<property name="openjpa.ConnectionUserName" value="postgres"/>
+      		<property name="openjpa.ConnectionPassword" value="postgresql"/>
+			<property name="openjpa.Log" value="Runtime=TRACE" />
+			<property name="openjpa.log" value="SQL=TRACE" />
+			<property name="openjpa.jdbc.DBDictionary"
+				value="org.apache.openjpa.jdbc.sql.PostgresDictionary" />
+			<property name="openjpa..jdbc.SynchrnoizeMappings" value="buildSchema" />
+		</properties>
 	</persistence-unit>
 </persistence>

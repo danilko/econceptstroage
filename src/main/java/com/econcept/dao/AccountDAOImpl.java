@@ -110,7 +110,7 @@ public class AccountDAOImpl implements AccountDAO {
 	{
 		// Create JPQL Query to find all accounts with account id
 		Query lQuery = mEntityManager.
-				createQuery("SELECT ACCOUNTOBJECT FROM Account ACCOUNTOBJECT WHERE ACCOUNTOBJECT.ACCOUNT_ID LIKE :P_ACCOUNT_ID AND ACCOUNTOBJECT.ACCOUNT_PASSWORD LIKE :P_ACCOUNT_PASSWORD").setParameter("P_ACCOUNT_ID", pAccountID).setMaxResults(1);
+				createQuery("SELECT ACCOUNTOBJECT FROM Account ACCOUNTOBJECT WHERE ACCOUNTOBJECT.mAccountID LIKE :P_ACCOUNT_ID").setParameter("P_ACCOUNT_ID", pAccountID).setMaxResults(1);
 
 		// Retrieve the first account
 		Account lAccount = (Account) lQuery.getResultList().get(0);
@@ -139,12 +139,26 @@ public class AccountDAOImpl implements AccountDAO {
 		// Create query to find account by account password and  account id
 		// Create JPQL Query to find all accounts with account id
 		Query lQuery = mEntityManager.
-				createQuery("SELECT ACCOUNTOBJECT FROM Account ACCOUNTOBJECT WHERE ACCOUNTOBJECT.ACCOUNT_ID LIKE :P_ACCOUNT_ID AND ACCOUNTOBJECT.ACCOUNT_PASSWORD LIKE :P_ACCOUNT_PASSWORD").setParameter("P_ACCOUNT_ID", pAccountID).setParameter("P_ACCOUNT_PASSOWRD", pAccountPassword).setMaxResults(1);
+				createQuery("SELECT ACCOUNTOBJECT FROM Account ACCOUNTOBJECT WHERE ACCOUNTOBJECT.mAccountID LIKE :P_ACCOUNT_ID AND ACCOUNTOBJECT.mAccountPassword LIKE :P_ACCOUNT_PASSWORD").setParameter("P_ACCOUNT_ID", pAccountID).setParameter("P_ACCOUNT_PASSWORD", pAccountPassword).setMaxResults(1);
 
 		// Retrieve the first account
-		Account lAccount = (Account) lQuery.getResultList().get(0);
+		List<?> lList = lQuery.getResultList();
 
-		return lAccount;
+		if(lList.size() != 0)
+		{
+			Object lObject = lList.get(0);
+			
+			if(lObject instanceof Account)
+			{
+				return (Account) lObject;
+			}  // if
+			else
+			{
+				throw new ClassCastException();
+			}  // else
+		}  // else
+		
+		return null;
 	}  // Account getAccountByIDAndPassword
 
 	@Transactional(rollbackFor = Throwable.class)

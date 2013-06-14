@@ -30,15 +30,26 @@
 
 package com.econcept.webservice.rest;
 
+import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.sling.commons.json.JSONObject;
 
 import com.econcept.dao.AccountDAOImpl;
 import com.econcept.entities.Account;
 
+@Path("/account")
+@Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class AccountService {
+	public final static String CONFIRM="CONFIRM";
+	public final static String UNCONFIRM="UNCONFIRM";
+	
+	public final static String ACCOUNT_ID="account_id";
+	public final static String ACCOUNT_PASSWORD="account_password";
 	
 	/**
 	 * 
@@ -67,7 +78,7 @@ public class AccountService {
 			AccountDAOImpl lImpl = new AccountDAOImpl();
 			
 			JSONObject lReturnUserListObject = new JSONObject();
-			lReturnUserListObject.append("user_list", lImpl.getAllAccount());
+			lReturnUserListObject.append("account_list", lImpl.getAllAccount());
 			
 			return "{\"status\": \"success\",\"statusmessage\": "
 					+ lReturnUserListObject.toString() + "}";
@@ -123,25 +134,25 @@ public class AccountService {
 			AccountDAOImpl lImpl = new AccountDAOImpl();
 			
 			// If the operation is confirm.  check if the account exists and is confirmed
-			if(lOperation.equals("CONFIRM"))
+			if(lOperation.equals(CONFIRM))
 			{
 				// Check if status is 
 				if(lImpl.getConfirmedAccount(
-						lJSONObject.getString("account_id "),
-						lJSONObject.getString("account_password")))
+						lJSONObject.getString(ACCOUNT_ID),
+						lJSONObject.getString(ACCOUNT_PASSWORD)))
 				{
-					lStringBuilder.append("confirmed");
+					lStringBuilder.append("\"" + CONFIRM + "\"");
 				}  // if
 				else
 				{
-					lStringBuilder.append("unconfirmed");
+					lStringBuilder.append("\"" + UNCONFIRM + "\"");
 				}  // else
 			}  // if
 			// If the operation is ADD, add the account into the persistence storage
 			else if(lOperation.equals("ADD"))
 			{
 				lImpl.addAccount(
-						lJSONObject.getString("account_id "),
+						lJSONObject.getString(ACCOUNT_ID),
 						lJSONObject.getString("first_name"),
 						lJSONObject.getString("last_name"),
 						lJSONObject.getString("account_password"),
@@ -156,7 +167,7 @@ public class AccountService {
 			// If the operation is DELETE, remove the account from the persistence storage
 			else if(lOperation.equals("DELETE"))
 			{
-				lImpl.deleteAccountByAccountID(lJSONObject.getString("account_id "));
+				lImpl.deleteAccountByAccountID(lJSONObject.getString(ACCOUNT_ID));
 			}  // else
 			
 			lStringBuilder.append("}");
