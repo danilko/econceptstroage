@@ -52,6 +52,8 @@ import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.apache.sling.commons.json.JSONObject;
 
+import com.econcept.services.FileService;
+
 
 /**
  * 
@@ -60,10 +62,10 @@ import org.apache.sling.commons.json.JSONObject;
  * <p>To provide rest end points for upload, delete, get file, get file lists according to user input</p>
  *
  */
-@Path("/")
+@Path("/file")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class UploadService
+public class FileResource
 {
 	public final static String ACCOUNT_ID="account_id";
 	public final static String DATA_DIR="DATA_DIR";
@@ -93,40 +95,7 @@ public class UploadService
 		{
 			JSONObject lObject = new JSONObject(pMessage);
 
-			String lAccountID = lObject.getString(ACCOUNT_ID);
-
-			// Convert data dir to UNIX like path to eliminate possible errors
-			File lFolder = new File(System.getenv(DATA_DIR).toString()
-					.replace("\\", "/")
-					+ "/" + lAccountID);
-			// Retrieve all files from file lists
-			File[] lFileList = lFolder.listFiles();
-
-			// Start build JSON array for file list
-			StringBuilder lBuilder = new StringBuilder();
-			lBuilder.append("[");
-
-			// Only go through file list if file list itself is not null
-			if (lFileList != null)
-			{
-				for (int lIndex = 0; lIndex < lFileList.length; lIndex++)
-				{
-					// Add double quotes to surround each file name
-					lBuilder.append("\"");
-					lBuilder.append(lFileList[lIndex].getName());
-					lBuilder.append("\"");
-
-					// If next element is available, add comma
-					if (lIndex + 1 < lFileList.length)
-					{
-						lBuilder.append(",");
-					} // if
-				} // for
-			} // if
-			lBuilder.append("]");
-			
-			return "{\"status\": \"success\",\"statusmessage\": "
-					+ lBuilder.toString() + "}";
+			return FileService.getFileList(lObject.getString(ACCOUNT_ID));
 		} // try
 		catch (Exception pException)
 		{

@@ -56,14 +56,18 @@ import com.econcept.entities.Account;
  */
 
 @Repository
-public class AccountDAOImpl implements AccountDAO {
-	EntityManagerFactory mEntityManagerFactory = Persistence
-			.createEntityManagerFactory("entityManagerFactory");
+public class AccountDAOImpl implements AccountDAO 
+{
+	private EntityManagerFactory mEntityManagerFactory = Persistence.createEntityManagerFactory("account-unit");
+	
+	private EntityManager mEntityManager = mEntityManagerFactory.createEntityManager();
 
 	@PersistenceContext
-	private EntityManager mEntityManager = mEntityManagerFactory
-			.createEntityManager();
-
+	public void setEntityManager(EntityManager pEntityManager)
+	{
+		mEntityManager = pEntityManager;
+	}  // void setEntityManager
+	
 	@Transactional(rollbackFor = Throwable.class)
 	public void addAccount(Account pAccount) {
 		EntityTransaction lEntityTransaction = mEntityManager.getTransaction();
@@ -73,7 +77,7 @@ public class AccountDAOImpl implements AccountDAO {
 		// Commit and apply the change to the database
 		lEntityTransaction.commit();
 	} // void addAccount
-
+	
 	@Override
 	public List<Account> getAllAccount() throws ClassCastException {
 		// Create Java Persistence Query Language (JPQL) Query to find all accounts
@@ -122,16 +126,6 @@ public class AccountDAOImpl implements AccountDAO {
 		// Commit and apply the change to the database
 		lEntityTransaction.commit();
 	} // void deleteAccount
-
-	@Override
-	public void setEntityManager(EntityManager pEntityManager) {
-		mEntityManager = pEntityManager;
-	} // void setEntityManager
-
-	@Override
-	public EntityManager getEntityManager() {
-		return mEntityManager;
-	} // EntityManager getEntityManager
 
 	@Override
 	public Account getAccountByAccountIDAndAccountPassword(String pAccountID,

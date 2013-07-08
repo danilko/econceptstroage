@@ -44,7 +44,7 @@ import com.econcept.entities.Account;
 @Path("/account")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class AccountService {
+public class AccountResource {
 	public final static String CONFIRM="CONFIRM";
 	public final static String UNCONFIRM="UNCONFIRM";
 	

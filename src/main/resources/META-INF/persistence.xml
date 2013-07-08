@@ -2,7 +2,7 @@
 <persistence version="2.0"
 	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
-	<persistence-unit name="entityManagerFactory"
+	<persistence-unit name="account-unit"
 		transaction-type="RESOURCE_LOCAL">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 		<class>com.econcept.entities.Account</class>
@@ -11,11 +11,10 @@
       		<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
       		<property name="openjpa.ConnectionUserName" value="postgres"/>
       		<property name="openjpa.ConnectionPassword" value="postgresql"/>
-			<property name="openjpa.Log" value="Runtime=TRACE" />
-			<property name="openjpa.log" value="SQL=TRACE" />
+			<property name="openjpa.Log" value="Runtime=TRACE,SQL=TRACE" />
 			<property name="openjpa.jdbc.DBDictionary"
 				value="org.apache.openjpa.jdbc.sql.PostgresDictionary" />
-			<property name="openjpa..jdbc.SynchrnoizeMappings" value="buildSchema" />
+			<property name="openjpa.jdbc.SynchronizeMappings" value="buildSchema" />
 		</properties>
 	</persistence-unit>
 </persistence>

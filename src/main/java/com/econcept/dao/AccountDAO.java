@@ -81,16 +81,4 @@ public interface AccountDAO
 	 * @param pAccountID The account id for the account to be deleted from persistence storage
 	 */
 	public void deleteAccountByAccountID(String pAccountID);
-	
-	/**
-	 * Set the inputed entity manager as the entity manager to perform the operation
-	 * @param pEntityManager The entity manager to perform the operation
-	 */
-	public void setEntityManager(EntityManager pEntityManager);
-	
-	/**
-	 * Get the inputed entity manager as the entity manager to perform the operation
-	 * @return EntityManager The entity manager to perform the operation
-	 */
-	public EntityManager getEntityManager();
 }  // class AccountDAO

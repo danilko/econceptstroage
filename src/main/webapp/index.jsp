@@ -95,7 +95,7 @@
 
     	        // AJAX call
     	        $.ajax({
-    	            url: "rest/uploadwithuri",
+    	            url: "service/rest/file/uploadwithuri",
     	            type: "POST",
     	            data: lJSONData,
     	            dataType: "json",
@@ -128,7 +128,7 @@
     	        lJSONData = lJSONData + "}";
 
     	        $.ajax({
-    	            url: "rest/getfilelist",
+    	            url: "service/rest/file/getfilelist",
     	            type: "POST",
     	            data: lJSONData,
     	            dataType: "json",
@@ -176,7 +176,7 @@
     	                	lTableHTMLString = lTableHTMLString + '<tr>';
     	                	// File Name
     	                	lTableHTMLString = lTableHTMLString + '<td>' +  (lFileIndex + 1) + '</td>';
-    	                	lTableHTMLString = lTableHTMLString + '<td><a href="rest/getfile?account_id=' + $("#txtAccount_ID").val() + '&filename=' + pData.statusmessage [lFileIndex] + '">' + pData.statusmessage [lFileIndex] + '</a></td>';
+    	                	lTableHTMLString = lTableHTMLString + '<td><a href="service/rest/getfile?account_id=' + $("#txtAccount_ID").val() + '&filename=' + pData.statusmessage [lFileIndex] + '">' + pData.statusmessage [lFileIndex] + '</a></td>';
     	                	// Delete button for the particular file
     	                	lTableHTMLString = lTableHTMLString + '<td><input class="btn" type="button" onclick="deleteFile(\'' + pData.statusmessage [lFileIndex]  + '\');" value="Delete"/></td>';
     	        			lTableHTMLString = lTableHTMLString + '</tr>';
@@ -210,7 +210,7 @@
 
     	        // Perform AJAX Call
     	        $.ajax({
-    	            url: "rest/deletefile",
+    	            url: "service/rest/file/deletefile",
     	            type: "POST",
     	            data: lJSONData,
     	            dataType: "json",
@@ -246,7 +246,7 @@
   	        
   	        // Perform AJAX Call
   	        $.ajax({
-  	            url: "rest/account/account",
+  	            url: "service/rest/account/account",
   	            type: "POST",
   	            data: lJSONData,
   	            dataType: "json",
@@ -389,7 +389,7 @@
                 <div class="span4">
                     <h2>Upload with Web Based Form</h2>
                     <p>Choose file and upload it!</p>
-                    <form id="file_upload_form" action="rest/upload" method="post" enctype="multipart/form-data">
+                    <form id="file_upload_form" action="service/rest/upload" method="post" enctype="multipart/form-data">
 					  <input class="btn" type = "file" name ="fileUploadFile" id="fileUploadFile"/>
 					  <input class="btn" type = "text" name ="txtAccount_ID"  id="txtAccount_ID" style="display:none;"/>
 					  <br/></br>
