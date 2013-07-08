@@ -25,4 +25,4 @@ EMAIL,
 ACCOUNT_STATUS,
 ACCOUNT_PERMISSION)
 VALUES
-('admin', 'admin_first', 'admin_last','admin', 'admin@test.com', 1, 0)
+('admintest', 'admin_first', 'admin_last','admin', 'admin@test.com', 1, 0)

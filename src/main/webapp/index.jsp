@@ -389,7 +389,7 @@
                 <div class="span4">
                     <h2>Upload with Web Based Form</h2>
                     <p>Choose file and upload it!</p>
-                    <form id="file_upload_form" action="service/rest/upload" method="post" enctype="multipart/form-data">
+                    <form id="file_upload_form" action="service/rest/file/upload" method="post" enctype="multipart/form-data">
 					  <input class="btn" type = "file" name ="fileUploadFile" id="fileUploadFile"/>
 					  <input class="btn" type = "text" name ="txtAccount_ID"  id="txtAccount_ID" style="display:none;"/>
 					  <br/></br>

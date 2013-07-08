@@ -32,17 +32,22 @@ THE SOFTWARE.
 Description
 ===============
 
-Using JAX-RS with Apache CXF and Spring to achieve online file storage concept
+Using JAX-RS with Apache CXF, Spring, OpenJPA, PostgreSQL to achieve online file storage concept
 
 Environment Variable DATA_DIR must be present and point to a writable location in order to ensure application functions correctly
+
+Database information currently store in META-INF/Persistence.xml, will need to move into Spring configuration
 
 ===============
 
 
 TODO
 ===============
-<p>Design Database for user authentication and files/users linking</p>
-<p>Clean up code documentation</p>
+<li>Solve clear text password problem</li>
+<li>Clean up code documentation</li>
+<li>Move Database information to environment variable based</li>
+<li>More unit tests</li>
+
 ===============
 
 
