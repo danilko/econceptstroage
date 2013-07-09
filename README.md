@@ -36,7 +36,7 @@ Using JAX-RS with Apache CXF, Spring, OpenJPA, PostgreSQL to achieve online file
 
 Environment Variable DATA_DIR must be present and point to a writable location in order to ensure application functions correctly
 
-Database information currently store in META-INF/Persistence.xml, will need to move into Spring configuration
+Database information currently store in main/resources/application.properties
 
 ===============
 
