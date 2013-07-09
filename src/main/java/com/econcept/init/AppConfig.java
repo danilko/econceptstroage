@@ -2,6 +2,7 @@ package com.econcept.init;
 
 import java.util.Arrays;
 
+import javax.inject.Inject;
 import javax.ws.rs.ext.RuntimeDelegate;
 
 import org.apache.cxf.bus.spring.SpringBus;
@@ -9,6 +10,8 @@ import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
 import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
@@ -21,14 +24,21 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
+import com.econcept.dao.AccountDAOImpl;
+import com.econcept.entities.Account;
 import com.econcept.webservice.rest.AccountResource;
 import com.econcept.webservice.rest.RestServiceApplication;
 import com.econcept.webservice.rest.FileResource;
 
 @Configuration
 @EnableWebMvc
+@PropertySource(value="classpath:application.properties")
 public class AppConfig extends WebMvcConfigurerAdapter
 {
+	// Inject PropertySource into environment instance
+	@Inject
+	private Environment mEnvironment;
+	
 	@Bean(destroyMethod = "shutdown")
 	public SpringBus cxf()
 	{
@@ -51,6 +61,17 @@ public class AppConfig extends WebMvcConfigurerAdapter
 		return new RestServiceApplication();
 	}  // RestServiceApplication getRestServiceApplication
 
+	@Bean
+	public AccountDAOImpl getAccountDAOImpl()
+	{
+		return new AccountDAOImpl();
+	}  // AccountDAO getAccountDAO
+
+	@Bean
+	public Account getAccount()
+	{
+		return new Account();
+	}  // Account getAccount
 	
 	@Bean
 	public Server initJAXRSServer() {
@@ -101,10 +122,10 @@ public class AppConfig extends WebMvcConfigurerAdapter
 	public DriverManagerDataSource getDataSource()
 	{
 		DriverManagerDataSource lDataSource = new DriverManagerDataSource();
-		lDataSource.setDriverClassName("org.postgresql.Driver");
-		lDataSource.setUrl("jdbc:postgresql://localhost:5432/postgres");
-		lDataSource.setPassword("postgres");
-		lDataSource.setPassword("postgresql");
+		lDataSource.setDriverClassName(mEnvironment.getProperty("jdbc.driverClassName"));
+		lDataSource.setUrl(mEnvironment.getProperty("jdbc.url"));
+		lDataSource.setUsername(mEnvironment.getProperty("jdbc.username"));
+		lDataSource.setPassword(mEnvironment.getProperty("jdbc.password"));
 		
 		return lDataSource;
 	}  // 

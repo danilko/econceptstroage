@@ -3,14 +3,10 @@
 	xmlns="http://java.sun.com/xml/ns/persistence" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd">
 	<persistence-unit name="account-unit"
-		transaction-type="RESOURCE_LOCAL">
+		transaction-type="JTA">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
 		<class>com.econcept.entities.Account</class>
 		<properties>
-		    <property name="openjpa.ConnectionURL" value="jdbc:postgresql://localhost:5432/postgres"/>
-      		<property name="openjpa.ConnectionDriverName" value="org.postgresql.Driver"/>
-      		<property name="openjpa.ConnectionUserName" value="postgres"/>
-      		<property name="openjpa.ConnectionPassword" value="postgresql"/>
 			<property name="openjpa.Log" value="Runtime=TRACE,SQL=TRACE" />
 			<property name="openjpa.jdbc.DBDictionary"
 				value="org.apache.openjpa.jdbc.sql.PostgresDictionary" />

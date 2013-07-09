@@ -30,6 +30,7 @@
 
 package com.econcept.webservice.rest;
 
+import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -37,10 +38,12 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.apache.sling.commons.json.JSONObject;
+import org.springframework.stereotype.Service;
 
-import com.econcept.dao.AccountDAOImpl;
+import com.econcept.dao.AccountDAO;
 import com.econcept.entities.Account;
 
+@Service
 @Path("/account")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
@@ -50,6 +53,9 @@ public class AccountResource {
 	
 	public final static String ACCOUNT_ID="account_id";
 	public final static String ACCOUNT_PASSWORD="account_password";
+	
+	@Resource
+	private AccountDAO mAccountDAO;
 	
 	/**
 	 * 
@@ -75,10 +81,8 @@ public class AccountResource {
 	{
 		try
 		{
-			AccountDAOImpl lImpl = new AccountDAOImpl();
-			
 			JSONObject lReturnUserListObject = new JSONObject();
-			lReturnUserListObject.append("account_list", lImpl.getAllAccount());
+			lReturnUserListObject.append("account_list", mAccountDAO.getAllAccount());
 			
 			return "{\"status\": \"success\",\"statusmessage\": "
 					+ lReturnUserListObject.toString() + "}";
@@ -131,13 +135,11 @@ public class AccountResource {
 			StringBuilder lStringBuilder = new StringBuilder();
 			lStringBuilder.append("{\"status\": \"success\",\"statusmessage\": ");
 			
-			AccountDAOImpl lImpl = new AccountDAOImpl();
-			
 			// If the operation is confirm.  check if the account exists and is confirmed
 			if(lOperation.equals(CONFIRM))
 			{
 				// Check if status is 
-				if(lImpl.getConfirmedAccount(
+				if(mAccountDAO.getConfirmedAccount(
 						lJSONObject.getString(ACCOUNT_ID),
 						lJSONObject.getString(ACCOUNT_PASSWORD)))
 				{
@@ -151,7 +153,7 @@ public class AccountResource {
 			// If the operation is ADD, add the account into the persistence storage
 			else if(lOperation.equals("ADD"))
 			{
-				lImpl.addAccount(
+				mAccountDAO.addAccount(
 						lJSONObject.getString(ACCOUNT_ID),
 						lJSONObject.getString("first_name"),
 						lJSONObject.getString("last_name"),
@@ -167,7 +169,7 @@ public class AccountResource {
 			// If the operation is DELETE, remove the account from the persistence storage
 			else if(lOperation.equals("DELETE"))
 			{
-				lImpl.deleteAccountByAccountID(lJSONObject.getString(ACCOUNT_ID));
+				mAccountDAO.deleteAccountByAccountID(lJSONObject.getString(ACCOUNT_ID));
 			}  // else
 			
 			lStringBuilder.append("}");

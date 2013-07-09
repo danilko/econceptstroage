@@ -34,9 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
-import javax.persistence.Persistence;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -58,15 +56,8 @@ import com.econcept.entities.Account;
 @Repository
 public class AccountDAOImpl implements AccountDAO 
 {
-	private EntityManagerFactory mEntityManagerFactory = Persistence.createEntityManagerFactory("account-unit");
-	
-	private EntityManager mEntityManager = mEntityManagerFactory.createEntityManager();
-
 	@PersistenceContext
-	public void setEntityManager(EntityManager pEntityManager)
-	{
-		mEntityManager = pEntityManager;
-	}  // void setEntityManager
+	private EntityManager mEntityManager;
 	
 	@Transactional(rollbackFor = Throwable.class)
 	public void addAccount(Account pAccount) {
