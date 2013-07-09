@@ -176,7 +176,7 @@
     	                	lTableHTMLString = lTableHTMLString + '<tr>';
     	                	// File Name
     	                	lTableHTMLString = lTableHTMLString + '<td>' +  (lFileIndex + 1) + '</td>';
-    	                	lTableHTMLString = lTableHTMLString + '<td><a href="service/rest/getfile?account_id=' + $("#txtAccount_ID").val() + '&filename=' + pData.statusmessage [lFileIndex] + '">' + pData.statusmessage [lFileIndex] + '</a></td>';
+    	                	lTableHTMLString = lTableHTMLString + '<td><a href="service/rest/file/getfile?account_id=' + $("#txtAccount_ID").val() + '&filename=' + pData.statusmessage [lFileIndex] + '">' + pData.statusmessage [lFileIndex] + '</a></td>';
     	                	// Delete button for the particular file
     	                	lTableHTMLString = lTableHTMLString + '<td><input class="btn" type="button" onclick="deleteFile(\'' + pData.statusmessage [lFileIndex]  + '\');" value="Delete"/></td>';
     	        			lTableHTMLString = lTableHTMLString + '</tr>';
