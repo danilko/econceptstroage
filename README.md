@@ -32,17 +32,22 @@ THE SOFTWARE.
 Description
 ===============
 
-Using JAX-RS with Jersey Implmemnation to achieve online file storage concept
+Using JAX-RS with Apache CXF, Spring, OpenJPA, PostgreSQL to achieve online file storage concept
 
 Environment Variable DATA_DIR must be present and point to a writable location in order to ensure application functions correctly
+
+Database information currently store in main/resources/application.properties
 
 ===============
 
 
 TODO
 ===============
-Design Database for user authentication and files/users linking
-Clean up code documentation
+<li>Solve clear text password problem</li>
+<li>Clean up code documentation</li>
+<li>Move Database information to environment variable based</li>
+<li>More unit tests</li>
+
 ===============
 
 
