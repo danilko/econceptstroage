@@ -41,7 +41,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -51,6 +50,8 @@ import javax.persistence.Table;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity
@@ -62,30 +63,36 @@ public class User implements UserDetails
 	 */
 	private static final long serialVersionUID = -4286123905019916530L;
 	
+	@JsonProperty("user_name")
 	@Column(name = "user_name", unique = true, nullable = false, length=60)
 	private String user_name;
 	
+	@JsonProperty("user_id")
 	@Id
 	@Column(name = "user_id", unique = true, nullable = false, length=60)
 	private String user_id;
 	
+	@JsonProperty("first_name")
 	@Column(name = "first_name", unique = true, nullable = false, length=60)
 	private String first_name;
 	
+	@JsonProperty("last_name")
 	@Column(name = "last_name", unique = true, nullable = false, length=60)
 	private String last_name;
 	
+	@JsonProperty("user_password")
 	@Column(name = "user_password", unique = true, nullable = false, length=60)
 	private String user_password;
 	
+	@JsonProperty("email")
 	@Column(name = "email", unique = true, nullable = false, length=60)
 	private String email;
 	
 	@Column(name = "user_non_locked", nullable = false, length=1)
 	private String user_non_locked;
 	
-	@Column(name = "credentials_non_expired", nullable = false, length=1)
-	private String credentials_non_expired;
+	@Column(name = "credentials_expired", nullable = false, length=1)
+	private String credentials_expired;
 	
 	@Column(name = "user_non_expired", nullable = false, length=1)
 	private String user_non_expired;
@@ -96,15 +103,14 @@ public class User implements UserDetails
 	@Column(name = "user_last_modified_date", nullable = false, length=8)
 	private String user_last_modified_date;
 	
-//	@OneToMany(fetch = FetchType.LAZY, mappedBy = "user_id", cascade=CascadeType.ALL, targetEntity=UserRole.class)
-	private Set <UserRole> mUserRoles;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy="user")
+	private Set <UserRole> user_roles = new HashSet<UserRole>(0);
 	
 	/**
 	 * Empty Constructor
 	 */
 	public User()
 	{
-		mUserRoles=new HashSet<UserRole>(0);
 	}  // User
 	
 	/**
@@ -129,10 +135,10 @@ public class User implements UserDetails
 		email=pEmail;
 		user_non_locked=pAccountNonLocked;
 		user_non_expired=pAccountNonLocked;
-		credentials_non_expired=pCredentialsNonExpired;
+		credentials_expired=pCredentialsNonExpired;
 		user_created_date=pAccountCreatedDate;
 		user_last_modified_date=pAccountLastModifiedDate;
-		mUserRoles=new HashSet<UserRole>(0);
+		user_roles=new HashSet<UserRole>(0);
 	}  // User
 
 	public String getUserID() 
@@ -207,13 +213,21 @@ public class User implements UserDetails
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
+		
 		List<GrantedAuthority> lAuthList = new ArrayList<GrantedAuthority>();
 		
-		for(UserRole lUserRole : mUserRoles)
+		if(user_id != null)
+		{
+			UserAuthority lUserAuthority = new UserAuthority();
+			lUserAuthority.setUserAuthorityName("ROLE_USER");
+			lAuthList.add(lUserAuthority);
+		}  // if
+		
+/*		for(UserRole lUserRole : user_roles)
 		{
 			lAuthList.add(lUserRole.getUserAuthority());
 		}  // for
-		
+*/		
 		return lAuthList;
 	}  // Collection<? extends GrantedAuthority> getAuthorities()
 
@@ -249,19 +263,20 @@ public class User implements UserDetails
 		return false;
 	}  // boolean isAccountNonLocked
 
-	public String getCredentialsNonExpired() 
+	public String getCredentialsExpired() 
 	{
-		return credentials_non_expired;
-	}  // String getCredentialsNonExpired 
+		return credentials_expired;
+	}  // String getCredentialsExpired 
 	
-	public void setCredentialsNonExpired(String pCredentialsNonExpired) 
+	public void setDataCredentialsExpired(String pCredentialsExpired) 
 	{
-		credentials_non_expired = pCredentialsNonExpired;
+		credentials_expired = pCredentialsExpired;
 	}  // void setCredentialsNonExpired
 	
+	@Override
 	public boolean isCredentialsNonExpired() 
 	{
-		if(credentials_non_expired.equalsIgnoreCase("Y"))
+		if(credentials_expired.equalsIgnoreCase("N"))
 		{
 			return true;
 		}  // if
@@ -281,12 +296,12 @@ public class User implements UserDetails
 	
 	public Set <UserRole> getUserRoles()
 	{
-		return mUserRoles;
+		return user_roles;
 	}  // Set <UserRole> getUserRoles
 	
 	public void setUserRoles(Set <UserRole> pUserRoles)
 	{
-		mUserRoles = pUserRoles;
+		user_roles = pUserRoles;
 	}  // void setUserRoles
 	
 	@Override

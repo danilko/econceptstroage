@@ -11,8 +11,6 @@ public class AppHttpSessionListener implements HttpSessionListener
 	{
 		// In seconds, so active for 15 minutes
 		pHttpSessionEvent.getSession().setMaxInactiveInterval(15 * 60);
-		
-		System.out.print("Creste session");
 	}
 
 	@Override

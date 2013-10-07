@@ -35,11 +35,11 @@
 
 package com.econcept.entities;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -62,8 +62,13 @@ public class UserRole implements java.io.Serializable
 	@Column(name = "user_authority_id", nullable=false, length=60)
 	private String user_authority_id;
 	
-	//@OneToOne(fetch =FetchType.LAZY, mappedBy = "user_authority_id",  cascade=CascadeType.ALL, targetEntity=UserAuthority.class)
-	private UserAuthority mUserAuthority;
+	@OneToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="user_id")
+	private User user;
+	
+	@OneToOne(fetch =FetchType.LAZY)
+	@JoinColumn(name="user_authority_id")
+	private UserAuthority user_authority;
 	
 	public String getUserRoleID() 
 	{
@@ -96,12 +101,12 @@ public class UserRole implements java.io.Serializable
 
 	public void setUserAuthority(UserAuthority pUserAuthority) 
 	{
-		mUserAuthority=pUserAuthority;
+		user_authority=pUserAuthority;
 	}  // UserAuthority getUserAuthority
 	
 	public UserAuthority getUserAuthority() 
 	{
-		return mUserAuthority;
+		return user_authority;
 	}  // UserAuthority getUserAuthority
 	
 	@Override

@@ -35,7 +35,6 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.URL;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -51,12 +50,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.io.FileUtils;
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.econcept.entities.FileEntity;
+import com.econcept.entities.User;
 import com.econcept.provider.FileProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -80,12 +79,12 @@ public class FileService
 	private FileProvider mFileService;
 	
 	/**
-	 * Get the UserName from the SecurityContext
-	 * @return String The UserName in the SecurityContext 
+	 * Get the User Object from the SecurityContext
+	 * @return User The User Object in the SecurityContext 
 	 */
-	private String getUserName()
+	private User getUser()
 	{
-		return SecurityContextHolder.getContext().getAuthentication().getName();
+		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}  // String getUserName
 	
 	/**
@@ -96,6 +95,7 @@ public class FileService
 	 *         
 	 */
 	@GET
+	@Path("/list")
 	@Produces("application/json")
 	public Response getFileList()
 	{
@@ -103,7 +103,7 @@ public class FileService
 		try
 		{
 			ObjectMapper lMapper = new ObjectMapper();
-			lBuilder = Response.status(Status.ACCEPTED).entity(lMapper.writeValueAsString(mFileService.getFileList(getUserName())));
+			lBuilder = Response.status(Status.ACCEPTED).entity(lMapper.writeValueAsString(mFileService.getFileList(getUser().getUserID())));
 		} // try
 		catch (Exception pException)
 		{
@@ -130,14 +130,8 @@ public class FileService
 		
 		try
 		{
-			// Retrieve the file through user information, convert to UNIX format to eliminate
-			// possible errors
-			File lFile = new File(System.getenv(DATA_DIR).toString()
-					.replace("\\", "/")
-					+ "/" + getUserName() + "/" + "/" + pFileName);
-
 			// Build the response and add file as part of the response
-			lBuilder = Response.status(Status.ACCEPTED).entity((Object) lFile);
+			lBuilder = Response.status(Status.ACCEPTED).entity((Object) (mFileService.getFile(getUser().getUserID(), pFileName)));
 			lBuilder.header("Content-Disposition",
 					"attachment; filename=\"" + pFileName + "\"");
 		}  // try
@@ -166,7 +160,7 @@ public class FileService
 		try
 		{
 			// Delete the file and return status
-			mFileService.deleteFile(getUserName(), pFileName);
+			mFileService.deleteFile(getUser().getUserID(), pFileName);
 			lBuilder = Response.status(Status.ACCEPTED);
 		}  // try
 		catch (Exception pException)
@@ -202,29 +196,11 @@ public class FileService
 		
 		try
 		{
-			// Convert to JSON object
 			ObjectMapper lMapper = new ObjectMapper();
 			FileEntity lFileEntity = lMapper.readValue(pMessage, FileEntity.class);
 			
-			String lFilePath = System.getenv(DATA_DIR).toString()
-					.replace("\\", "/")
-					+ "/" + getUserName() + "/" + "/" + lFileEntity.getFileName();
-			
-			// Set the output file and conver to UNIX styles
-			File lFile = new File(lFilePath);
-			
-			// Set the URL to download files from
-			URL lURL = new URL(lFileEntity.getURI());
-			FileUtils.copyURLToFile(lURL, lFile);
-			
-			lFile = new File(lFilePath);
-			
-			lFileEntity.setFileSize(Long.toString(lFile.getTotalSpace()));
-			lFileEntity.setLastModified(Long.toString(lFile.lastModified()));
-			lFileEntity.setURI(null);
-			
 			// Set upload status
-			lBuilder = Response.status(Status.ACCEPTED).entity(lMapper.writeValueAsString(lFileEntity));
+			lBuilder = Response.status(Status.ACCEPTED).entity(lMapper.writeValueAsString(mFileService.saveFileWithURI(getUser().getUserID(), lFileEntity)));
 		}  // try
 		catch (Exception pException)
 		{
@@ -270,7 +246,7 @@ public class FileService
 		// Set the file output path and convert to UNIX format
 		File lFile = new File(System.getenv(DATA_DIR).toString()
 				.replace("\\", "/")
-				+ "/" + getUserName() + "/" + "/" + pAttachment.getContentDisposition().getParameter("filename"));
+				+ "/" + getUser().getUserID() + "/" + "/" + pAttachment.getContentDisposition().getParameter("filename"));
 		try
 		{
 			// Retrieve output stream through multipart data
@@ -289,7 +265,7 @@ public class FileService
 			
 			pUploadedFileInputStream .close();
 			
-			lBuilder = Response.status(Status.ACCEPTED);
+			lBuilder = Response.ok();
 		} // try
 		catch (Exception pException)
 		{

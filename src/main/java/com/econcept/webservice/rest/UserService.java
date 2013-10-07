@@ -38,10 +38,13 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
+
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.econcept.entities.User;
 import com.econcept.provider.UserProvider;
@@ -54,56 +57,39 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  *
  */
 
-@Path("/account")
+@Path("/user")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserService 
-{
-	public final static String ACCOUNT_ID="account_id";
-	public final static String ACCOUNT_PASSWORD="account_password";
-	
-	public final static String CONFIRM="CONFIRM";
-	
-	@POST
-	public Response authenticated()
-	{
-		return Response.ok().build();
-	}  // Response authenticated()
-	
+{	
 	@Resource
 	UserProvider mUserService;
 	
 	/**
-	 * 
-	 * <p>Get all accounts within persistence storage</p>
-	 * 
-	 * @return String in JSON format
-	 *           <p>JSON parameters and their values</p>
-	 *           <p>status type = string</p>
-	 *           <p>The status for the operation</p>
-	 *           <p>statusmessage type = string/string array</p>
-	 *           <p>The status message to log detail information about operation</p>
+	 * Get the UserName from the SecurityContext
+	 * @return String The UserName in the SecurityContext 
 	 */
-	@GET
-	public Response getUserList()
+	private User getUser()
 	{
-		ResponseBuilder lBuilder = null;
-		
+		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+	}  // String getUserName
+	
+	@GET
+	public Response authenticated()
+	{
 		try
 		{
-			ObjectMapper lMapper = new ObjectMapper();
-			lBuilder = Response.status(Status.ACCEPTED).entity(lMapper.writeValueAsString(mUserService.getUserList()));
-		} // try
-		catch (Exception pException)
-		{
-			pException.printStackTrace();
-			
-			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
-		} // catch
+			User lUser = getUser();
 
-		
-		return lBuilder.build();
-	} // String getFileList
+			ObjectMapper lMapper = new ObjectMapper();
+			
+			return Response.ok().entity(lMapper.writeValueAsString(lUser)).build();
+		}  // try
+		catch(Exception pException)
+		{
+			throw new WebApplicationException(pException);
+		}  // catch
+	}  // Response authenticated()
 	
 	/**
 	 * 
@@ -163,6 +149,7 @@ public class UserService
 	 *           <p>statusmessage type = string/string array</p>
 	 *           <p>The status message to log detail information about operation</p>
 	 */
+	
 	@DELETE
 	@Path("/{user_id}")
 	public Response deleteUser(@PathParam("account_id") String pUserID)
@@ -176,10 +163,7 @@ public class UserService
 			
 			mUserService.deleteUser(lUser);
 			
-			StringBuilder lStringBuilder = new StringBuilder();
-			lStringBuilder.append("{\"status\": \"success\",\"statusmessage\": \"success\"}");
-			
-			lBuilder = Response.ok(lStringBuilder.toString());
+			lBuilder = Response.ok();
 		} // try
 		catch (Exception pException)
 		{
