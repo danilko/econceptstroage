@@ -31,10 +31,7 @@
 
 package com.econcept.webservice.rest;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.InputStream;
-import java.io.OutputStream;
 
 import javax.annotation.Resource;
 import javax.ws.rs.Consumes;
@@ -44,7 +41,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -73,8 +69,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Consumes(MediaType.APPLICATION_JSON)
 public class FileService
 {
-	public final static String DATA_DIR="DATA_DIR";
-	
 	@Resource
 	private FileProvider mFileService;
 	
@@ -96,18 +90,20 @@ public class FileService
 	 */
 	@GET
 	@Path("/list")
-	@Produces("application/json")
 	public Response getFileList()
 	{
 		ResponseBuilder lBuilder = null;
+		
 		try
 		{
 			ObjectMapper lMapper = new ObjectMapper();
-			lBuilder = Response.status(Status.ACCEPTED).entity(lMapper.writeValueAsString(mFileService.getFileList(getUser().getUserID())));
+			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileService.getFileList(getUser().getUserID())));
 		} // try
 		catch (Exception pException)
 		{
-			throw new WebApplicationException(pException);
+			pException.printStackTrace();
+			
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
 		
 		return lBuilder.build();
@@ -130,14 +126,18 @@ public class FileService
 		
 		try
 		{
+			ObjectMapper lObjectMapper = new ObjectMapper();
+			
 			// Build the response and add file as part of the response
-			lBuilder = Response.status(Status.ACCEPTED).entity((Object) (mFileService.getFile(getUser().getUserID(), pFileName)));
+			lBuilder = Response.status(Status.OK).entity(lObjectMapper.writeValueAsString(mFileService.getFile(getUser().getUserID(), pFileName)));
 			lBuilder.header("Content-Disposition",
 					"attachment; filename=\"" + pFileName + "\"");
 		}  // try
 		catch (Exception pException)
 		{
-			throw new WebApplicationException(pException);
+			pException.printStackTrace();
+			
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
 		
 		return lBuilder.build();
@@ -161,11 +161,13 @@ public class FileService
 		{
 			// Delete the file and return status
 			mFileService.deleteFile(getUser().getUserID(), pFileName);
-			lBuilder = Response.status(Status.ACCEPTED);
+			lBuilder = Response.status(Status.OK).entity("[]");
 		}  // try
 		catch (Exception pException)
 		{
-			throw new WebApplicationException(pException);
+			pException.printStackTrace();
+			
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
 		
 		return lBuilder.build();
@@ -199,12 +201,13 @@ public class FileService
 			ObjectMapper lMapper = new ObjectMapper();
 			FileEntity lFileEntity = lMapper.readValue(pMessage, FileEntity.class);
 			
-			// Set upload status
-			lBuilder = Response.status(Status.ACCEPTED).entity(lMapper.writeValueAsString(mFileService.saveFileWithURI(getUser().getUserID(), lFileEntity)));
+			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileService.saveFileWithURI(getUser().getUserID(), lFileEntity)));
 		}  // try
 		catch (Exception pException)
 		{
-			throw new WebApplicationException(pException);
+			pException.printStackTrace();
+			
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
 		
 		return lBuilder.build();
@@ -240,38 +243,27 @@ public class FileService
 			@Multipart("fileUploadFile") Attachment pAttachment,
 			@Multipart("fileUploadFile") InputStream pUploadedFileInputStream)
 	{
-
 		ResponseBuilder lBuilder = null;
 		
-		// Set the file output path and convert to UNIX format
-		File lFile = new File(System.getenv(DATA_DIR).toString()
-				.replace("\\", "/")
-				+ "/" + getUser().getUserID() + "/" + "/" + pAttachment.getContentDisposition().getParameter("filename"));
 		try
 		{
-			// Retrieve output stream through multipart data
-			OutputStream lOutputStream = new FileOutputStream(lFile);
-			int lRead = 0;
-			// Set the upload threshold to 1 KB for every read
-			byte[] lBytes = new byte[1024];
-			// Write while read from form data
-			while ((lRead = pUploadedFileInputStream.read(lBytes)) != -1)
-			{
-				lOutputStream.write(lBytes, 0, lRead);
-			} // while
-
-			lOutputStream.flush();
-			lOutputStream.close();
+			ObjectMapper lMapper = new ObjectMapper();
 			
-			pUploadedFileInputStream .close();
-			
-			lBuilder = Response.ok();
-		} // try
+			mFileService.saveFileWithOutputStream(getUser().getUserID(), pAttachment.getContentDisposition().getParameter("filename"), pUploadedFileInputStream);
+	
+			lBuilder = Response.status(Status.OK)
+					.entity(lMapper.writeValueAsString(
+							mFileService.saveFileWithOutputStream(getUser().getUserID(), 
+									pAttachment.getContentDisposition().getParameter("filename"),
+									pUploadedFileInputStream)));
+		}  // try
 		catch (Exception pException)
 		{
-			throw new WebApplicationException(pException);
+			pException.printStackTrace();
+			
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
-
+		
 		return lBuilder.build();
 	}  // Response upload
 }  // class UploadService

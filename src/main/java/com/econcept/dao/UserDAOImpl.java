@@ -97,48 +97,37 @@ public class UserDAOImpl implements UserDAO
 		{
 		// Create query to find account by account password and  account id
 		// Create JPQL Query to find all accounts with account id
-		String lBasedQuery = "SELECT user_object FROM User user_object "
-		+
-				"WHERE user_object.user_name LIKE :pUserName";// +
-	//			"AND user_object.getPassword() LIKE :pPassword" +
-	//			"AND user_object.getUserName() LIKE :pUserName";
+		String lBasedQuery = "SELECT user_object FROM User user_object ";
 		
-		Query lQuery = mEntityManager.
-				createQuery(lBasedQuery);
+		Query lQuery = null;
 		
 		if(pUser != null)
 		{
 			String lParameter = pUser.getUserName();
 			if(lParameter != null)
 			{
+				lBasedQuery = lBasedQuery + "WHERE user_object.user_name LIKE :pUserName ";
+				lQuery = mEntityManager.
+						createQuery(lBasedQuery);
 				lQuery = lQuery.setParameter("pUserName", lParameter);
 			}  // if
-			else
+			else if(pUser.getUserID() != null)
 			{
-				lQuery = lQuery.setParameter("pUserName", "user_object.user_name");
-			}  // else
-			
-			lParameter = pUser.getPassword();
-			/*if(lParameter != null)
-			{
-				lQuery.setParameter(":pPassword", lParameter);
-			}  // if
-			else
-			{
-				lQuery.setParameter(":pPassword", "user_object.getPassword()");
-			}  // else
-*/			
-			//lQuery.setParameter(":pPassword", "51cc052412b76323ceecdfb213229765fb3ba41736430526151b2724896959f6");
+				lParameter = pUser.getUserID();
+				if(lParameter != null)
+				{
+					lBasedQuery = lBasedQuery +  "AND user_object.user_id LIKE :pUserID";
+					lQuery = mEntityManager.
+						createQuery(lBasedQuery);
+					lQuery = lQuery.setParameter("pUserID", lParameter);
+				}  // if
+			}  // else if
 		}  // if
 		else
 		{
-			//lQuery.setParameter(":pUserID", "user_object.getUserID()");
-			//lQuery.setParameter(":pPassword", "user_object.getPassword()");
+			lQuery = mEntityManager.createQuery(lBasedQuery);
 		}  // else
-		
-		//lQuery.setParameter(":pUserName", "admin_username");
-		//lQuery.setParameter(":pPassword", "51cc052412b76323ceecdfb213229765fb3ba41736430526151b2724896959f6");
-		
+			
 		List<?> lQueryList = lQuery.getResultList();
 
 		// If query size is 0, return null to indicate no account

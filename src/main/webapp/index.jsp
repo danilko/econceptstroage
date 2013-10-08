@@ -67,10 +67,12 @@ body {
 				$('#file_upload_form').ajaxForm(
 						{
 							// Initialize status
-							beforeSend : function() {
+							beforeSend : function(pXHR) 
+							{
+								pXHR.setRequestHeader('X-CSRF-Token', upload_csrf_token);
 								var lPercentValue = '0%';
 								lProgress.html(lPercentValue);
-							}, // beforeSend: function
+							}, // beforeSend
 							// Update progress
 							uploadProgress : function(pEvent, pPosition,
 									pTotal, pPercentComplete) {
@@ -197,18 +199,19 @@ body {
 				</ul>
 				<div id="divServiceTabContents" class="tab-content">
 					<div id="divFiles" class="tab-pane active">
+						<div id="divFilelist"></div>
 					</div>
 					<div id="divUpload" class="tab-pane">
 						<div>
 							<h1>Upload with Web Based Form</h1>
 							<p>Choose file and upload it!</p>
+							<a class="btn" id="btnFileBrowse" onClick="$('#fileUploadFile').click();">Browse</a>
+								<label id="lblFileBrowseName" for="txtFileUpload">No File is Selected</label>
+								<br /></br> 
 							<form id="file_upload_form" action="rest/file/upload"
 								method="post" enctype="multipart/form-data">
 								<input class="btn" type="file" name="fileUploadFile"
 									id="fileUploadFile" style="display:none" onChange="$('#lblFileBrowseName').html($('#fileUploadFile').val())"/> 
-								<a class="btn" id="btnFileBrowse" onClick="$('#fileUploadFile').click();">Browse</a>
-								<label id="lblFileBrowseName" for="txtFileUpload">No File is Selected</label>
-								<br /></br> 
 								<input class="btn" type="submit" value="Upload with Form" />
 							</form>
 							<div id="progress"></div>

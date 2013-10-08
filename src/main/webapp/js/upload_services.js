@@ -1,3 +1,5 @@
+var upload_csrf_token = null;
+
 //
 // updateWithURI
 // Compute user information and file uri as a JSON message and send
@@ -9,7 +11,7 @@
 function updateWithURI() {
 	var lJSONData=
 	'{'+
-	'"mURI":"' + $('#txtUploadFileURI').val() + '"' +
+	'"uri":"' + $('#txtUploadFileURI').val() + '"' +
 	'}';
 	
 	// AJAX call
@@ -18,10 +20,14 @@ function updateWithURI() {
 		type : "POST",
 		data : lJSONData,
 		dataType : "json",
+		beforeSend : function(pXHR) 
+		{
+			pXHR.setRequestHeader('X-CSRF-Token', upload_csrf_token);
+		}, // beforeSend
 		contentType : "application/json; charset=utf-8",
 		success : function(pData) {
 			// Print out status and message
-				$("#divLoginStatus")
+			$("#divUploadStatus")
 				.html(
 						'<div class="alert alert-success" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Opeartion Success</h4> Your opeartion just finished successfully</div>');;
 			getFileList();
@@ -47,47 +53,26 @@ function getFileList()
 				type : "GET",
 				dataType : "json",
 				contentType : "application/json; charset=utf-8",
-				success : function(pData) {
-					$('#result').html('');
-					$('#result').append('<p>' + pData.status + '</p>');
-
+				success : function(pData, pTextStatus, pRequest) 
+				{
+					upload_csrf_token = pRequest.getResponseHeader('X-CSRF-TOKEN');
+					
 					// Clear the file list to ensure newest list is updated
-					$('#filelist').html('');
+					$('#divFilelist').html('');
 
 					// Get the file list length
 					var lFileListLength = pData.length;
-
-					// Only need to go through file list if there is one or
-					// more,
-					// else print the message to show no file and end the
-					// function
-					if (lFileListLength == 0) 
-					{
-						var lTableHTMLString = '<table class="table table-striped">';
-						// Table Header
-						lTableHTMLString = lTableHTMLString + '<thead>';
-						lTableHTMLString = lTableHTMLString + '<tr>';
-						lTableHTMLString = lTableHTMLString + '<th>#</td>';
-						lTableHTMLString = lTableHTMLString + '<th>File Name</td>';
-						lTableHTMLString = lTableHTMLString + '<th></td>';
-						lTableHTMLString = lTableHTMLString + '</tr>';
-						lTableHTMLString = lTableHTMLString + '</thead>';
-						lTableHTMLString = lTableHTMLString + '</table>';
-						
-						// Add the table into the file list div
-						$('#filelist').append(lTableHTMLString);
-						
-						return;
-					} // if
 
 					// Prepare table to display file list
 					var lTableHTMLString = '<table class="table table-striped">';
 					// Table Header
 					lTableHTMLString = lTableHTMLString + '<thead>';
 					lTableHTMLString = lTableHTMLString + '<tr>';
-					lTableHTMLString = lTableHTMLString + '<th>#</td>';
-					lTableHTMLString = lTableHTMLString + '<th>File Name</td>';
-					lTableHTMLString = lTableHTMLString + '<th></td>';
+					lTableHTMLString = lTableHTMLString + '<th>#</th>';
+					lTableHTMLString = lTableHTMLString + '<th>File Name</th>';
+					lTableHTMLString = lTableHTMLString + '<th>File Size</th>';
+					lTableHTMLString = lTableHTMLString + '<th>Last Modified</th>';
+					lTableHTMLString = lTableHTMLString + '<th>Operations</th>';
 					lTableHTMLString = lTableHTMLString + '</tr>';
 					lTableHTMLString = lTableHTMLString + '</thead>';
 
@@ -99,21 +84,29 @@ function getFileList()
 						lTableHTMLString = lTableHTMLString + '<td>'
 								+ (lFileIndex + 1) + '</td>';
 						lTableHTMLString = lTableHTMLString
-								+ '<td><a href="service/rest/file/'
-								+ pData.statusmessage[lFileIndex] + '">'
-								+ pData.statusmessage[lFileIndex] + '</a></td>';
+								+ '<td><a href="rest/file/'
+								+ pData[lFileIndex].fileName + '">'
+								+ pData[lFileIndex].fileName + '</a></td>';
+						// File Size
+						lTableHTMLString = lTableHTMLString
+								+ '<td>' + pData[lFileIndex].fileSize + '</td>';
+				
+						// Last Modified
+						lTableHTMLString = lTableHTMLString
+								+ '<td>' + pData[lFileIndex].lastModified + '</td>';
+				
 						// Delete button for the particular file
 						lTableHTMLString = lTableHTMLString
-								+ '<td><input class="btn" type="button" onclick="deleteFile(\''
-								+ pData.statusmessage[lFileIndex]
-								+ '\');" value="Delete"/></td>';
+								+ '<td><a href="#" class="icon-trash" onclick="deleteFile(\''
+								+ pData[lFileIndex].fileName
+								+ '\');"/></a></td>';
 						lTableHTMLString = lTableHTMLString + '</tr>';
 					} // for
 
 					lTableHTMLString = lTableHTMLString + '</table>';
 
 					// Add the table into the file list div
-					$('#filelist').append(lTableHTMLString);
+					$('#divFilelist').append(lTableHTMLString);
 				} // success: function(pData)
 				,
 				error : function(xhr, status, thrown) {
@@ -134,18 +127,20 @@ function deleteFile(pFileName) {
 	$.ajax({
 		url : "rest/file/" + pFileName,
 		type : "DELETE",
-		data : lJSONData,
 		dataType : "json",
+		beforeSend : function(pXHR) 
+		{
+			pXHR.setRequestHeader('X-CSRF-Token', upload_csrf_token);
+		}, // beforeSend
 		contentType : "application/json; charset=utf-8",
 		success : function(pData) {
 			// Print out status and message
-			$("#divLoginStatus")
+			$("#divUploadStatus")
 			.html(
 					'<div class="alert alert-success" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Opeartion Success</h4> Your opeartion just finished successfully</div>');;
 
 			getFileList();
-		} // success: function(pData)
-		,
+		}, // success: function(pData)
 		error : function(xhr, status, thrown) 
 		{
 			fileOperationErrorStatus(xhr);
@@ -161,7 +156,7 @@ function deleteFile(pFileName) {
 function refresh()
 {
 	// Only if the user is login, perform the refresh
-	if($("#txtModalLoginUser").val() != '')
+	if(login_csrf_token != null)
 	{
 		getFileList(); 
 	}  // if

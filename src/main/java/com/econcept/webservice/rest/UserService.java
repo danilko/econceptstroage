@@ -38,7 +38,6 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
@@ -75,21 +74,34 @@ public class UserService
 	}  // String getUserName
 	
 	@GET
-	public Response authenticated()
+	public Response getCXFSToken()
 	{
+		return Response.status(Status.OK).entity("[]").build();
+	}  // Response getCXFSToken
+	
+	@Path("/authenticate")
+	@POST
+	public Response authenticate()
+	{
+		ResponseBuilder lBuilder = null;
+		
 		try
 		{
 			User lUser = getUser();
 
 			ObjectMapper lMapper = new ObjectMapper();
 			
-			return Response.ok().entity(lMapper.writeValueAsString(lUser)).build();
+			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(lUser));
 		}  // try
-		catch(Exception pException)
+		catch (Exception pException)
 		{
-			throw new WebApplicationException(pException);
-		}  // catch
-	}  // Response authenticated()
+			pException.printStackTrace();
+			
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
+		} // catch
+		
+		return lBuilder.build();
+	}  // Response authenticate()
 	
 	/**
 	 * 
@@ -125,7 +137,7 @@ public class UserService
 		try
 		{
 
-			lBuilder = Response.status(Status.ACCEPTED);
+			lBuilder = Response.status(Status.OK).entity("[]");
 		} // try
 		catch (Exception pException)
 		{
@@ -163,7 +175,7 @@ public class UserService
 			
 			mUserService.deleteUser(lUser);
 			
-			lBuilder = Response.ok();
+			lBuilder = Response.status(Status.OK).entity("[]");
 		} // try
 		catch (Exception pException)
 		{

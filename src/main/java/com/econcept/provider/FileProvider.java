@@ -1,6 +1,9 @@
 package com.econcept.provider;
 
 import java.io.File;
+import java.io.FileOutputStream;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -23,16 +26,8 @@ public class FileProvider {
 	 */
 	public List<FileEntity> getFileList(String pUserID) {
 		try {
-			String lFileDataDir = System.getenv(DATA_DIR).toString();
-
-			// Used to prevent openshift gear restarting from idle and not set
-			// environment variable properly
-			if (lFileDataDir == null) {
-				lFileDataDir = System.getenv("OPENSHIFT_DATA_DIR").toString();
-			} // if
-
 			// Convert data dir to UNIX like path to eliminate possible errors
-			File lFolder = new File((lFileDataDir).replace("\\", "/") + "/"
+			File lFolder = new File(getValue(DATA_DIR) + "/"
 					+ pUserID);
 			File[] lFileList = null;
 
@@ -43,11 +38,8 @@ public class FileProvider {
 
 				// Only go through file list if file list itself is not null
 				for (File lFile : lFileList) {
-					FileEntity lFileEntity = new FileEntity();
-					lFileEntity.setFileName(lFile.getName());
-					lFileEntity.setLastModified(lFile.getName());
-					lFileEntity.setFileName(lFile.getName());
-					lFileEntity.setFileSize(Long.toString(lFile.length()));
+					FileEntity lFileEntity = new FileEntity(lFile);
+					lFileEntities.add(lFileEntity);
 				} // for
 			} // if
 			return lFileEntities;
@@ -62,15 +54,15 @@ public class FileProvider {
 		// Retrieve the file through user information, convert to UNIX format to
 		// eliminate
 		// possible errors
-		return new File(System.getenv(DATA_DIR).toString().replace("\\", "/")
+		return new File(getValue(DATA_DIR)
 				+ "/" + pUserID + "/" + "/" + pFileName);
 	} // File getFile
 
-	public File saveFileWithURI(String pUserID, FileEntity pFileEntity)
+	public FileEntity saveFileWithURI(String pUserID, FileEntity pFileEntity)
 			throws Exception {
-		String lFilePath = System.getenv(DATA_DIR).toString()
-				.replace("\\", "/")
-				+ "/" + pUserID + "/" + "/" + pFileEntity.getFileName();
+		String [] lFilePathTokens = pFileEntity.getURI().split("/");
+		String lFilePath = getValue(DATA_DIR)
+				+ "/" + pUserID + "/" + "/" + lFilePathTokens[lFilePathTokens.length - 1];
 
 		// Set the output file and conver to UNIX styles
 		File lFile = new File(lFilePath);
@@ -79,23 +71,37 @@ public class FileProvider {
 		URL lURL = new URL(pFileEntity.getURI());
 		FileUtils.copyURLToFile(lURL, lFile);
 
-		return new File(lFilePath);
+		return new FileEntity(new File(lFilePath));
 	} // File saveFileWithURI
 
-	public File saveFileWithFile(String pUserID, FileEntity pFileEntity)
-			throws Exception {
-		String lFilePath = System.getenv(DATA_DIR).toString()
-				.replace("\\", "/")
-				+ "/" + pUserID + "/" + "/" + pFileEntity.getFileName();
+	public FileEntity saveFileWithOutputStream(String pUserID, String pFileName, InputStream pInputStream)
+			throws Exception 
+			{
+		String lFilePath = getValue(DATA_DIR)
+				+ "/" + pUserID + "/" + "/" + pFileName;
+		try
+		{
+			// Retrieve output stream through multipart data
+			OutputStream lOutputStream = new FileOutputStream(lFilePath);
+			int lRead = 0;
+			// Set the upload threshold to 1 KB for every read
+			byte[] lBytes = new byte[1024];
+			// Write while read from form data
+			while ((lRead = pInputStream.read(lBytes)) != -1)
+			{
+				lOutputStream.write(lBytes, 0, lRead);
+			} // while
 
-		// Set the output file and conver to UNIX styles
-		File lFile = new File(lFilePath);
-
-		// Set the URL to download files from
-		URL lURL = new URL(pFileEntity.getURI());
-		FileUtils.copyURLToFile(lURL, lFile);
-
-		return new File(lFilePath);
+			lOutputStream.flush();
+			lOutputStream.close();
+		} // try
+		catch(Exception pException)
+		{
+			pException.printStackTrace();
+			throw pException;
+		}  // catch
+		
+		return new FileEntity(new File(lFilePath));
 	} // File saveFileWithFile
 
 	/**
@@ -112,8 +118,7 @@ public class FileProvider {
 	 */
 	public void deleteFile(String pUserID, String pFileName) throws Exception {
 		try {
-			File lFile = new File(System.getenv(DATA_DIR).toString()
-					.replace("\\", "/")
+			File lFile = new File(getValue(DATA_DIR)
 					+ "/" + pUserID + "/" + "/" + pFileName);
 
 			// Remove the file
@@ -123,5 +128,17 @@ public class FileProvider {
 			pException.printStackTrace();
 			throw pException;
 		} // catch
-	} // class FileService
-}
+	}  // void deleteFile
+	
+	public String getValue(String pValueKey)
+	{
+		String lValue = System.getenv(pValueKey);
+		
+		if(lValue == null)
+		{
+			lValue = System.getenv("OPENSHIFT_DATA_DIR");
+		}  // if
+		
+		return lValue.replace("\\", "/");
+	}  // String getValue
+} // class FileProvider
