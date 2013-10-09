@@ -97,13 +97,18 @@ OPENSHIFT DEPLOYMENT INSTRUCTION
 rhc app create -a ${GEAR_NAME} -t jbossews-2.0
 rhc cartridge-add -a ${GEAR_NAME} -c postgresql-9.2
 
-#Run econcept_ods.sql to generate necessary tables
-
 #Export following variables
 #Absolute path to SOURCE_REPO
-export SOURCE_GIT_REPO
+export SOURCE_GIT_REPO=
 #Absolute path to GEAR_REPO
-export GEAR_GIT_REPO
+export GEAR_GIT_REPO=
+#SSH_PATH for the gear
+
+#Run econcept_ods.sql to generate necessary tables
+scp  ${SOURCE_GIT_REPO}/econcept_ods.sql ${GEAR_SSH}:app-root/data
+ssh  ${GEAR_SSH}
+psql -f app-root/data/econcept_ods.sql
+exit
 
 # Execute maven to package the war
 cd ${SOURCE_GIT_REPO}
@@ -128,15 +133,15 @@ fi
 if [ -d ${GEAR_GIT_REPO}/.openshift ]
 then
 	rm -rf ${GEAR_GIT_REPO}/webapps
-	cp .openshift ${GEAR_GIT_REPO}
 fi
 
 cp ${SOURCE_GIT_REPO}/target/econceptstorage.war ${GEAR_GIT_REPO}/webapps
+cp -rf ${SOURCE_GIT_REPO}/.openshift ${GEAR_GIT_REPO}
 
 cd ${GEAR_GIT_REPO}
 git add -A .
-git update-index --chmod=+x .openshift/action-hooks/*
-git commit -m `cat ${SOURCE_GIT_REPO}/.git/refs/heads/master`
+git update-index --chmod=+x .openshift/action_hooks/*
+git commit -m "SOURCE GIT HEAD `cat ${SOURCE_GIT_REPO}/.git/refs/heads/master`"
 git push origin master
 
 ===============
