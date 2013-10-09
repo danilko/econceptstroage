@@ -74,18 +74,21 @@ public class FileProvider {
 		return new FileEntity(new File(lFilePath));
 	} // File saveFileWithURI
 
-	public FileEntity saveFileWithOutputStream(String pUserID, String pFileName, InputStream pInputStream)
+	public FileEntity saveFileWithInputStream(String pUserID, String pFileName, InputStream pInputStream)
 			throws Exception 
 			{
-		String lFilePath = getValue(DATA_DIR)
-				+ "/" + pUserID + "/" + "/" + pFileName;
+		String lFilePath = null;
 		try
 		{
+			lFilePath = getValue(DATA_DIR)
+					+ "/" + pUserID + "/" + "/" + pFileName;
+			
 			// Retrieve output stream through multipart data
 			OutputStream lOutputStream = new FileOutputStream(lFilePath);
 			int lRead = 0;
 			// Set the upload threshold to 1 KB for every read
 			byte[] lBytes = new byte[1024];
+			
 			// Write while read from form data
 			while ((lRead = pInputStream.read(lBytes)) != -1)
 			{
@@ -94,15 +97,17 @@ public class FileProvider {
 
 			lOutputStream.flush();
 			lOutputStream.close();
+			
+			pInputStream.close();
+			
+			return new FileEntity(new File(lFilePath));
 		} // try
 		catch(Exception pException)
 		{
 			pException.printStackTrace();
 			throw pException;
 		}  // catch
-		
-		return new FileEntity(new File(lFilePath));
-	} // File saveFileWithFile
+	} // FileEntity saveFileWithInputStream
 
 	/**
 	 * 
@@ -133,11 +138,6 @@ public class FileProvider {
 	public String getValue(String pValueKey)
 	{
 		String lValue = System.getenv(pValueKey);
-		
-		if(lValue == null)
-		{
-			lValue = System.getenv("OPENSHIFT_DATA_DIR");
-		}  // if
 		
 		return lValue.replace("\\", "/");
 	}  // String getValue

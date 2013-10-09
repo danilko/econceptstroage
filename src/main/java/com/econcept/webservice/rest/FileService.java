@@ -126,12 +126,11 @@ public class FileService
 		
 		try
 		{
-			ObjectMapper lObjectMapper = new ObjectMapper();
-			
 			// Build the response and add file as part of the response
-			lBuilder = Response.status(Status.OK).entity(lObjectMapper.writeValueAsString(mFileService.getFile(getUser().getUserID(), pFileName)));
+			lBuilder = Response.status(Status.OK).entity((Object)mFileService.getFile(getUser().getUserID(), pFileName));
 			lBuilder.header("Content-Disposition",
 					"attachment; filename=\"" + pFileName + "\"");
+			
 		}  // try
 		catch (Exception pException)
 		{
@@ -139,7 +138,7 @@ public class FileService
 			
 			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
-		
+
 		return lBuilder.build();
 	}  // Response getFile
 
@@ -249,11 +248,9 @@ public class FileService
 		{
 			ObjectMapper lMapper = new ObjectMapper();
 			
-			mFileService.saveFileWithOutputStream(getUser().getUserID(), pAttachment.getContentDisposition().getParameter("filename"), pUploadedFileInputStream);
-	
 			lBuilder = Response.status(Status.OK)
 					.entity(lMapper.writeValueAsString(
-							mFileService.saveFileWithOutputStream(getUser().getUserID(), 
+							mFileService.saveFileWithInputStream(getUser().getUserID(), 
 									pAttachment.getContentDisposition().getParameter("filename"),
 									pUploadedFileInputStream)));
 		}  // try

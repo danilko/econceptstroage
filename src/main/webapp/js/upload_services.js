@@ -29,7 +29,7 @@ function updateWithURI() {
 			// Print out status and message
 			$("#divUploadStatus")
 				.html(
-						'<div class="alert alert-success" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Opeartion Success</h4> Your opeartion just finished successfully</div>');;
+						'<div class="alert alert-success" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Opeartion Success</h4> File is uploaded successfully</div>');;
 			getFileList();
 		} // success: function(pData)
 		,
@@ -137,9 +137,8 @@ function deleteFile(pFileName) {
 			// Print out status and message
 			$("#divUploadStatus")
 			.html(
-					'<div class="alert alert-success" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Opeartion Success</h4> Your opeartion just finished successfully</div>');;
-
-			getFileList();
+					'<div class="alert alert-success" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Opeartion Success</h4> File is deleted successfully</div>');;
+			getFileList(); 
 		}, // success: function(pData)
 		error : function(xhr, status, thrown) 
 		{

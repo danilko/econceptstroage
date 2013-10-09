@@ -50,10 +50,93 @@ TODO
 
 ===============
 
-
 OpenShift
 ===============
 
 The Code is currently deployed to OpenShift
 http://econcept-econcept.rhcloud.com/econceptstorage/
 
+===============
+
+LOCALLY DEPLOYMENT INSTRUCTION
+===============
+
+#Install Postgres and run econcept_ods.sql to generate necessary tables
+
+#Export following environment variables in the current session, below is the example of OpenShift
+
+#FILE PERSISTENCE
+export DATA_DIR=${OPENSHIFT_DATA_DIR}
+
+#JDBC
+export JDBC_DRIVERCLASSNAME=org.postgresql.Driver
+export JDBC_URL=jdbc:postgresql://${OPENSHIFT_POSTGRESQL_DB_HOST}:${OPENSHIFT_POSTGRESQL_DB_PORT}/${OPENSHIFT_APP_NAME}
+export JDBC_USERNAME=${OPENSHIFT_POSTGRESQL_DB_USERNAME}
+export JDBC_PASSWORD=${OPENSHIFT_POSTGRESQL_DB_PASSWORD}
+export JDBC_MAXCONNECTIONPERPARTITION=8
+export JDBC_MINCONNECTIONPERPARTITION=2
+
+#MONGODB
+export MONODB_HOST=${OPENSHIFT_MONGODB_DB_HOST}
+export MONODB_PORT=${OPENSHIFT_MONGODB_DB_PORT}
+export MONODB_DBNAME=${OPENSHIFT_APP_NAME}
+export MONODB_USERNAME=${OPENSHIFT_MONGODB_DB_USERNAME}
+export MONODB_PASSWORD=${OPENSHIFT_MONGODB_DB_PASSWORD}
+
+# Execute embedded maven
+mvn clean package tomcat7:run -DskipTests
+
+#You should be able to see it in localhost:8080/econceptstorage
+
+===============
+
+OPENSHIFT DEPLOYMENT INSTRUCTION
+===============
+
+#Create JBosses-2.0 gear and add postgresql
+rhc app create -a ${GEAR_NAME} -t jbossews-2.0
+rhc cartridge-add -a ${GEAR_NAME} -c postgresql-9.2
+
+#Run econcept_ods.sql to generate necessary tables
+
+#Export following variables
+#Absolute path to SOURCE_REPO
+export SOURCE_GIT_REPO
+#Absolute path to GEAR_REPO
+export GEAR_GIT_REPO
+
+# Execute maven to package the war
+cd ${SOURCE_GIT_REPO}
+mvn clean package -DskipTests
+
+if [ -f ${GEAR_GIT_REPO}/pom.xml ]
+then
+	rm ${GEAR_GIT_REPO}/pom.xml 
+fi
+
+if [ -d ${GEAR_GIT_REPO}/src ]
+then
+	rm -rf ${GEAR_GIT_REPO}/src
+fi
+
+if [ -d ${GEAR_GIT_REPO}/webapps ]
+then
+	rm -rf ${GEAR_GIT_REPO}/webapps
+	mkdir -p ${GEAR_GIT_REPO}/webapps
+fi
+
+if [ -d ${GEAR_GIT_REPO}/.openshift ]
+then
+	rm -rf ${GEAR_GIT_REPO}/webapps
+	cp .openshift ${GEAR_GIT_REPO}
+fi
+
+cp ${SOURCE_GIT_REPO}/target/econceptstorage.war ${GEAR_GIT_REPO}/webapps
+
+cd ${GEAR_GIT_REPO}
+git add -A .
+git update-index --chmod=+x .openshift/action-hooks/*
+git commit -m `cat ${SOURCE_GIT_REPO}/.git/refs/heads/master`
+git push origin master
+
+===============

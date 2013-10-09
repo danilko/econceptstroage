@@ -54,8 +54,8 @@ body {
 	$(document).ready(
 			function() 
 			{
-				// Auto refresh list if sign in for every 30 seconds
-				var intVar=setInterval(function(){refresh()},30000);
+				// Auto refresh list if sign in for every 10 seconds
+				var intVar=setInterval(function(){refresh()},10000);
 				
 				// Retreive file list
 				//getFileList();
@@ -84,9 +84,9 @@ body {
 								if(pXHR.status == 200)
 								{
 								// Print out status and message
-									$("#divLoginStatus")
+									$("#divUploadStatus")
 									.html(
-										'<div class="alert alert-success" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Opeartion Success</h4> Your opeartion just finished successfully</div>');;
+										'<div class="alert alert-success" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Opeartion Success</h4> File is uploaded successfully</div>');;
 									// Update progress and file list once update completes
 									if (lJSONObject.status == 'success') {
 											lProgress.html('100% Complete');
