@@ -69,24 +69,27 @@ function confirmUserCredentials() {
 									setUserCredentials(pData);
 
 									// Refresh file list
-									refresh();
+									getFileList();
 
 									$("#login").slideUp();
 
-									$("#ulLogout").show();
+									$("#divLoginServices").show();
 									$("#services").show();
 								} // success: function(pData)
 								,
-								error : function(xhr, status, thrown) {
+								error : function(xhr, status, thrown) 
+								{
+									login_csrf_token = null;
+									
 									if (xhr.status == 401) {
 										$("#divLoginStatus")
 												.html(
-														'<div class="alert alert-error" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Login Error</h4> Incorrect Username or Password</div>');
+														'<div class="alert alert-danger" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Login Error</h4> Incorrect Username or Password</div>');
 									} // if
 									else {
 										$("#divLoginStatus")
 												.html(
-														'<div class="alert alert-error" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Login Error</h4> Server is under maintence, please come back later</div>');
+														'<div class="alert alert-danger" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Login Error</h4> Server is under maintence, please come back later</div>');
 									} // else
 								} // error : function (xhr, status, thrown)
 							}); // $.ajax
@@ -125,7 +128,8 @@ function clearLogin()
 	
 	$("#txtLoginUser").val('');
 	$("#txtLoginPassword").val('');
-
+	$("#lblFileBrowseName").html('No File is Selected');
+	
 	// Clear user credentials
 	$("#txtAccount_ID").val('');
 	$("#divAccountMessage").html('');
@@ -149,7 +153,8 @@ function clearLogin()
 //
 function clearUserCredentials() {
 	$("#services").hide();
-	$("#ulLogout").hide();
+	$('#account').hide();
+	$("#divLoginServices").hide();
 	$("#login").slideDown();
 
 	// Perform AJAX Call
@@ -169,6 +174,7 @@ function clearUserCredentials() {
 						$("#divLoginStatus")
 								.html(
 										'<div class="alert alert-success" ><a class="close" data-dismiss="alert" href="#">x</a><h4 class="alert-heading">Log out</h4>You are now sign out</div>');
+						location.reload(true);
 					} // if
 				} // error : function (xhr, status, thrown)
 			}); // $.ajax
