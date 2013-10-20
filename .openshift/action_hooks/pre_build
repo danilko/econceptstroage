@@ -4,7 +4,7 @@
 # before the build step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
 
-if [ -d ${OPENSHIFT_REPO_DIR}/../../../jbossews-2.0/work/Catalina/localhost ];
+if [ -d ${OPENSHIFT_REPO_DIR}/../../../jbossews/work/Catalina/localhost ];
 then
-	rm -rf ${OPENSHIFT_REPO_DIR}/../../../jbossews-2.0/work/Catalina/localhost/**
+	rm -rf ${OPENSHIFT_REPO_DIR}/../../../jbossews/work/Catalina/localhost/**
 fi
