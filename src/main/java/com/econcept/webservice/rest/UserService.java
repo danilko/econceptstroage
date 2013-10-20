@@ -43,6 +43,8 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.econcept.entities.User;
@@ -61,6 +63,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Consumes(MediaType.APPLICATION_JSON)
 public class UserService 
 {	
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+	
 	@Resource
 	UserProvider mUserService;
 	
@@ -95,8 +99,7 @@ public class UserService
 		}  // try
 		catch (Exception pException)
 		{
-			pException.printStackTrace();
-			
+			LOGGER.debug(pException.toString());
 			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
 		
@@ -141,8 +144,7 @@ public class UserService
 		} // try
 		catch (Exception pException)
 		{
-			pException.printStackTrace();
-			
+			LOGGER.debug(pException.toString());
 			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
 		
@@ -179,7 +181,7 @@ public class UserService
 		} // try
 		catch (Exception pException)
 		{
-			pException.printStackTrace();
+			LOGGER.debug(pException.toString());
 			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
 		

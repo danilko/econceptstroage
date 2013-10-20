@@ -173,7 +173,7 @@ body {
 							</div>
 							<br />
 							<form id="file_upload_form" action="rest/file/upload"
-								method="post" enctype="multipart/form-data">
+								method="post" enctype="multipart/form-data" accept-charset="UTF-8">
 								<input class="btn" type="file" name="fileUploadFile"
 									id="fileUploadFile" style="display: none"
 									onChange="$('#lblFileBrowseName').html($('#fileUploadFile').val())" />

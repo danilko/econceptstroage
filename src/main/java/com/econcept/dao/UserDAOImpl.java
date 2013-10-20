@@ -37,6 +37,8 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +57,8 @@ import com.econcept.entities.User;
 @Repository
 public class UserDAOImpl implements UserDAO 
 {
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserDAO.class);
+	
 	@PersistenceContext
 	private EntityManager mEntityManager;
 	
@@ -154,7 +158,7 @@ public class UserDAOImpl implements UserDAO
 		}
 		catch(Exception pException)
 		{
-			pException.printStackTrace();
+			LOGGER.debug(pException.toString());
 			throw pException;
 		}
 	}  // List<User> getUsers

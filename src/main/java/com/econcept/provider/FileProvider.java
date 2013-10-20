@@ -9,6 +9,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.io.FileUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import com.econcept.entities.FileEntity;
@@ -17,6 +19,7 @@ import com.econcept.entities.FileEntity;
 public class FileProvider {
 	public final static String DATA_DIR = "DATA_DIR";
 
+	private final static Logger LOGGER = LoggerFactory.getLogger(FileProvider.class);
 	/**
 	 * Retrieve the account id with file list
 	 * 
@@ -45,7 +48,7 @@ public class FileProvider {
 			return lFileEntities;
 		} // try
 		catch (Exception pException) {
-			pException.printStackTrace();
+			LOGGER.debug(pException.toString());
 			throw pException;
 		} // catch
 	} // String getFileList
@@ -83,6 +86,8 @@ public class FileProvider {
 			lFilePath = getValue(DATA_DIR)
 					+ "/" + pUserID + "/" + "/" + pFileName;
 			
+			System.out.println(pFileName);
+			
 			// Retrieve output stream through multipart data
 			OutputStream lOutputStream = new FileOutputStream(lFilePath);
 			int lRead = 0;
@@ -104,7 +109,7 @@ public class FileProvider {
 		} // try
 		catch(Exception pException)
 		{
-			pException.printStackTrace();
+			LOGGER.debug(pException.toString());
 			throw pException;
 		}  // catch
 	} // FileEntity saveFileWithInputStream
@@ -130,7 +135,7 @@ public class FileProvider {
 			lFile.delete();
 		} // catch
 		catch (Exception pException) {
-			pException.printStackTrace();
+			LOGGER.debug(pException.toString());
 			throw pException;
 		} // catch
 	}  // void deleteFile

@@ -32,6 +32,8 @@ package com.econcept.init;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -43,6 +45,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter
 {
+
+	private final static Logger LOGGER = LoggerFactory.getLogger(SecurityConfig.class);
+	
 	@Resource
 	AuthenticationProvider mAuthenticationProvider;
 	
@@ -68,7 +73,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 		} // try
 		catch (Exception pException) 
 		{
-			pException.printStackTrace();
+			LOGGER.debug(pException.toString());
 			throw new Exception(pException);
 		}  // catch
 	}  // void configure

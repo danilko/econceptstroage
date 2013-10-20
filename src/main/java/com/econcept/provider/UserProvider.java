@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -17,6 +19,8 @@ public class UserProvider implements UserDetailsService
 {
 	@Resource
 	private UserDAO mUserDAO;
+	
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserProvider.class);
 	
 	private final static int PASSWORD_MINIMUM_LENGTH = 8;
 	private final static int PASSWORD_MAXIMUM_LENGTH = 60;
@@ -81,6 +85,8 @@ public class UserProvider implements UserDetailsService
 				return (User)lList.get(0);
 			}  // if
 		}  // if
+		
+		LOGGER.debug("No match user found");
 		
 		throw new UsernameNotFoundException("No match user found");
 	}  // UserDetails loadUserByUsername

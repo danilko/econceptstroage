@@ -48,6 +48,8 @@ import javax.ws.rs.core.Response.Status;
 
 import org.apache.cxf.jaxrs.ext.multipart.Attachment;
 import org.apache.cxf.jaxrs.ext.multipart.Multipart;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.econcept.entities.FileEntity;
@@ -69,6 +71,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Consumes(MediaType.APPLICATION_JSON)
 public class FileService
 {
+	private final static Logger LOGGER = LoggerFactory.getLogger(FileService.class);
+	
 	@Resource
 	private FileProvider mFileService;
 	
@@ -101,8 +105,7 @@ public class FileService
 		} // try
 		catch (Exception pException)
 		{
-			pException.printStackTrace();
-			
+			LOGGER.debug(pException.toString());
 			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
 		} // catch
 		
@@ -134,9 +137,8 @@ public class FileService
 		}  // try
 		catch (Exception pException)
 		{
-			pException.printStackTrace();
-			
-			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
+			LOGGER.debug(pException.toString());
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException.toString());
 		} // catch
 
 		return lBuilder.build();
@@ -164,9 +166,9 @@ public class FileService
 		}  // try
 		catch (Exception pException)
 		{
-			pException.printStackTrace();
+			LOGGER.debug(pException.toString());
 			
-			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException.toString());
 		} // catch
 		
 		return lBuilder.build();
@@ -204,9 +206,9 @@ public class FileService
 		}  // try
 		catch (Exception pException)
 		{
-			pException.printStackTrace();
+			LOGGER.debug(pException.toString());
 			
-			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException.toString());
 		} // catch
 		
 		return lBuilder.build();
@@ -256,9 +258,9 @@ public class FileService
 		}  // try
 		catch (Exception pException)
 		{
-			pException.printStackTrace();
+			LOGGER.debug(pException.toString());
 			
-			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException);
+			lBuilder = Response.status(Status.INTERNAL_SERVER_ERROR).entity(pException.toString());
 		} // catch
 		
 		return lBuilder.build();
