@@ -37,12 +37,11 @@ import javax.ws.rs.ext.RuntimeDelegate;
 import org.apache.cxf.bus.spring.SpringBus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.rs.security.oauth2.services.AuthorizationCodeGrantService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import com.econcept.webservice.rest.UserService;
-import com.econcept.webservice.rest.FileService;
+import com.econcept.webservice.rest.UserResource;
+import com.econcept.webservice.rest.FileResource;
 import com.econcept.webservice.rest.RestServiceApplication;
 
 @Configuration
@@ -57,14 +56,14 @@ public class AppConfig
 	}  // SpringBus cxf
 	
 	@Bean
-	public FileService getFileService() {
-		return new FileService();
-	}  // FileEndpoint getFileService
+	public FileResource getFileResource() {
+		return new FileResource();
+	}  // FileResource getFileResource
 
 	@Bean
-	public UserService getUserService() {
-		return new UserService();
-	}  // AccountEndpoint getAccountService
+	public UserResource getUserResource() {
+		return new UserResource();
+	}  // UserResource getUserResource
 
 	@Bean
 	public RestServiceApplication getRestServiceApplication()
@@ -76,7 +75,7 @@ public class AppConfig
 	public Server initJAXRSServer() {
 		JAXRSServerFactoryBean lFactory = RuntimeDelegate.getInstance().createEndpoint(getRestServiceApplication(),
 				JAXRSServerFactoryBean.class);
-		lFactory.setServiceBeans(Arrays.<Object>asList(getUserService(), getFileService()));
+		lFactory.setServiceBeans(Arrays.<Object>asList(getUserResource(), getFileResource()));
 		
 		lFactory.setAddress(lFactory.getAddress());
 

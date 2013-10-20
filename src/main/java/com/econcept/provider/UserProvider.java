@@ -12,7 +12,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import com.econcept.dao.UserDAO;
-import com.econcept.entities.User;
+import com.econcept.entity.User;
 
 @Service
 public class UserProvider implements UserDetailsService

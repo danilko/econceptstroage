@@ -1,12 +1,10 @@
-﻿----------------------------------------------------------------------------------
+----------------------------------------------------------------------------------
 -- Main Table
 -- User Information Table
 ----------------------------------------------------------------------------------
-
--- Drop existing table if one exist
-DROP TABLE IF EXISTS USER_ROLES;
-DROP TABLE IF EXISTS USER_AUTHORITIES;
-DROP TABLE IF EXISTS USERS;
+DROP TABLE IF EXISTS USER_ROLES CASCADE;
+DROP TABLE IF EXISTS USER_AUTHORITIES CASCADE;
+DROP TABLE IF EXISTS USERS CASCADE;
 
 ----------------------------------------------------------------------------------
 -- TABLE USER

@@ -3,3 +3,8 @@
 # available.  Otherwise it will execute while your application is stopped
 # before the build step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
+
+if [ -d ${OPENSHIFT_REPO_DIR}/../../../jbossews-2.0/work/Catalina/localhost ];
+then
+	rm -rf ${OPENSHIFT_REPO_DIR}/../../../jbossews-2.0/work/Catalina/localhost/**
+fi

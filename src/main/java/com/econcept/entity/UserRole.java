@@ -33,7 +33,7 @@
  * Entity Object one role in Table USER_ROLES in persistence storage
  */
 
-package com.econcept.entities;
+package com.econcept.entity;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

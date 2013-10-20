@@ -52,8 +52,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.econcept.entities.FileEntity;
-import com.econcept.entities.User;
+import com.econcept.entity.FileEntity;
+import com.econcept.entity.User;
 import com.econcept.provider.FileProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -69,12 +69,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Path("/file")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class FileService
+public class FileResource
 {
-	private final static Logger LOGGER = LoggerFactory.getLogger(FileService.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(FileResource.class);
 	
 	@Resource
-	private FileProvider mFileService;
+	private FileProvider mFileProvider;
 	
 	/**
 	 * Get the User Object from the SecurityContext
@@ -101,7 +101,7 @@ public class FileService
 		try
 		{
 			ObjectMapper lMapper = new ObjectMapper();
-			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileService.getFileList(getUser().getUserID())));
+			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileProvider.getFileList(getUser().getUserID())));
 		} // try
 		catch (Exception pException)
 		{
@@ -130,7 +130,7 @@ public class FileService
 		try
 		{
 			// Build the response and add file as part of the response
-			lBuilder = Response.status(Status.OK).entity((Object)mFileService.getFile(getUser().getUserID(), pFileName));
+			lBuilder = Response.status(Status.OK).entity((Object)mFileProvider.getFile(getUser().getUserID(), pFileName));
 			lBuilder.header("Content-Disposition",
 					"attachment; filename=\"" + pFileName + "\"");
 			
@@ -161,7 +161,7 @@ public class FileService
 		try
 		{
 			// Delete the file and return status
-			mFileService.deleteFile(getUser().getUserID(), pFileName);
+			mFileProvider.deleteFile(getUser().getUserID(), pFileName);
 			lBuilder = Response.status(Status.OK).entity("[]");
 		}  // try
 		catch (Exception pException)
@@ -202,7 +202,7 @@ public class FileService
 			ObjectMapper lMapper = new ObjectMapper();
 			FileEntity lFileEntity = lMapper.readValue(pMessage, FileEntity.class);
 			
-			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileService.saveFileWithURI(getUser().getUserID(), lFileEntity)));
+			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileProvider.saveFileWithURI(getUser().getUserID(), lFileEntity)));
 		}  // try
 		catch (Exception pException)
 		{
@@ -252,7 +252,7 @@ public class FileService
 			
 			lBuilder = Response.status(Status.OK)
 					.entity(lMapper.writeValueAsString(
-							mFileService.saveFileWithInputStream(getUser().getUserID(), 
+							mFileProvider.saveFileWithInputStream(getUser().getUserID(), 
 									pAttachment.getContentDisposition().getParameter("filename"),
 									pUploadedFileInputStream)));
 		}  // try

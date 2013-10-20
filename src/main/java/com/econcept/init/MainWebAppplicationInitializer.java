@@ -44,7 +44,6 @@ import org.springframework.web.WebApplicationInitializer;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
-import org.springframework.web.util.Log4jConfigListener;
 
 public class MainWebAppplicationInitializer implements
 		WebApplicationInitializer {
@@ -54,8 +53,6 @@ public class MainWebAppplicationInitializer implements
 		AnnotationConfigWebApplicationContext lRootContext = new AnnotationConfigWebApplicationContext();
 		lRootContext.scan("com.econcept.init");
 
-		pContainer.addListener(new Log4jConfigListener());
-		
 		// Manage the lifecycle of the root application context
 		pContainer.addListener(new ContextLoaderListener(lRootContext));
 		

@@ -41,7 +41,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.stereotype.Service;
 
-import com.econcept.entities.FileEntity;
+import com.econcept.entity.FileEntity;
 import com.mongodb.BasicDBObject;
 
 @Service

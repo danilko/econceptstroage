@@ -56,7 +56,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 	{
 		pAuth
 			.authenticationProvider(mAuthenticationProvider);
-		
 	}  // void registerAuthetnication
 	
 	@Override

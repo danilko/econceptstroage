@@ -53,10 +53,10 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 import com.econcept.dao.UserDAO;
 import com.econcept.dao.UserDAOImpl;
-import com.econcept.entities.User;
-import com.econcept.entities.UserAuthority;
-import com.econcept.entities.UserRole;
-import com.econcept.webservice.rest.UserService;
+import com.econcept.entity.User;
+import com.econcept.entity.UserAuthority;
+import com.econcept.entity.UserRole;
+import com.econcept.webservice.rest.UserResource;
 import com.jolbox.bonecp.BoneCPDataSource;
 import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
@@ -70,8 +70,8 @@ public class DAOConfig
 	private Environment mEnvironment;
 	
 	@Bean
-	public UserService getAccountService() {
-		return new UserService();
+	public UserResource getAccountService() {
+		return new UserResource();
 	}  // AccountService getAccountService
 
 	@Bean

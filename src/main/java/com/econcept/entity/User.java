@@ -33,7 +33,7 @@
  * Entity Object to represent one role in Table USERS in persistence storage
  */
 
-package com.econcept.entities;
+package com.econcept.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -314,5 +314,4 @@ public class User implements UserDetails
 		
 		return user_id.hashCode();
 	}  // int hashCode
-
 }  // class Account

@@ -48,5 +48,4 @@ public class AppAuthenticationEntryPoint extends BasicAuthenticationEntryPoint
         pResponse.addHeader("WWW-Authenticate", "xBasic realm=\"" + getRealmName() +"\"");
 		pResponse.sendError(HttpServletResponse.SC_UNAUTHORIZED, authException.getMessage());
 	}  // commence
-
-}
+}  // class AppAuthenticationEntryPoint

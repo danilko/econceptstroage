@@ -28,7 +28,6 @@
  * 
  */
 
-
 package com.econcept.init;
 
 import org.springframework.context.annotation.Bean;
@@ -42,20 +41,20 @@ import com.econcept.provider.FileProvider;
 import com.econcept.provider.UserProvider;
 
 @Configuration
-public class ProviderConfig 
+public class ServiceConfig 
 {
 	@Bean
 	public FileProvider getFileProvider() {
 		return new FileProvider();
-	}  // FileService getFileService
+	}  // FileProvider getFileProvider
 
 	@Bean
-	public UserProvider getAccountProvider() {
+	public UserProvider getUserProvider() {
 		return new UserProvider();
-	}  // AccountService getAccountService
+	}  // UserProvider getUserProvider()
 	
 	@Bean
-	public AuthenticationProvider getAuthenticationProvider()
+	public AuthenticationProvider getAuthenticationService()
 	{
 		DaoAuthenticationProvider lProvider =new DaoAuthenticationProvider();
 
@@ -69,7 +68,7 @@ public class ProviderConfig
 		lProvider.setPasswordEncoder(lEncoder);
 		lProvider.setSaltSource(lSource);
 		
-		lProvider.setUserDetailsService(getAccountProvider());
+		lProvider.setUserDetailsService(getUserProvider());
 		
 /*		User lUser = new User();
 		lUser.setUserName("admin_username");
@@ -80,6 +79,7 @@ public class ProviderConfig
 
 		lProvider.setUserDetailsService(mUserProvider);
 		*/
+		
 		return lProvider;
 	}  // AuthenticationProvider getAuthenticationProvider
 }  // class ServiceConfig 

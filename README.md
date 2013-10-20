@@ -203,11 +203,8 @@ Copy the SQL to the gear and execute it
 
 ```
 #Run econcept_ods.sql to generate necessary tables
-scp  ${SOURCE_GIT_REPO}/econcept_ods.sql ${GEAR_SSH}:app-root/data
-ssh  ${GEAR_SSH}
-psql -f app-root/data/econcept_ods.sql
-rm -rf app-root/data/econcept_ods.sql
-exit
+scp  ${SOURCE_GIT_REPO}/econcept_ods.sql ${SSH_PATH}:app-root/data/econcept_ods.sql
+ssh  ${SSH_PATH} "psql -f app-root/data/econcept_ods.sql; rm -rf app-root/data/econcept_ods.sql; exit;"
 ```
 
 Execute following code to compile binary, copy it to local gear repo, and push it
@@ -269,11 +266,8 @@ export GEAR_GIT_REPO=/home/danilko/econceptstorage_openshift
 export SSH_PATH=sdfsa311sdafd4678@econcept-econceptstroage.local.openshift.com
 
 #Run econcept_ods.sql to generate necessary tables
-scp  ${SOURCE_GIT_REPO}/econcept_ods.sql ${GEAR_SSH}:app-root/data
-ssh  ${GEAR_SSH}
-psql -f app-root/data/econcept_ods.sql
-rm -rf app-root/data/econcept_ods.sql
-exit
+scp  ${SOURCE_GIT_REPO}/econcept_ods.sql ${SSH_PATH}:app-root/data/econcept_ods.sql
+ssh  ${SSH_PATH} "psql -f app-root/data/econcept_ods.sql; rm -rf app-root/data/econcept_ods.sql; exit;"
 
 # Execute maven to package the war
 cd ${SOURCE_GIT_REPO}

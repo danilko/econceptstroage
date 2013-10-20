@@ -5,9 +5,9 @@
 	<persistence-unit name="account-unit"
 		transaction-type="JTA">
 		<provider>org.apache.openjpa.persistence.PersistenceProviderImpl</provider>
-		<class>com.econcept.entities.User</class>
-		<class>com.econcept.entities.UserAuthority</class>
-		<class>com.econcept.entities.UserRole</class>
+		<class>com.econcept.entity.User</class>
+		<class>com.econcept.entity.UserAuthority</class>
+		<class>com.econcept.entity.UserRole</class>
 		<properties>
 			<property name="openjpa.Log" value="Runtime=TRACE,SQL=TRACE" />
 			<property name="openjpa.jdbc.DBDictionary"

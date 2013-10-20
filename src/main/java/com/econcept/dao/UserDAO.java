@@ -32,7 +32,7 @@ package com.econcept.dao;
 
 import java.util.List;
 
-import com.econcept.entities.User;
+import com.econcept.entity.User;
 
 /**
  * 

@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.econcept.entities.User;
+import com.econcept.entity.User;
 
 /**
  * 
@@ -160,6 +160,6 @@ public class UserDAOImpl implements UserDAO
 		{
 			LOGGER.debug(pException.toString());
 			throw pException;
-		}
+		}  // catch
 	}  // List<User> getUsers
 } // class AccountDAOImpl

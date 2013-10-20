@@ -28,7 +28,7 @@
  * 
  */
 
-package com.econcept.entities;
+package com.econcept.entity;
 
 import java.io.File;
 
@@ -90,6 +90,4 @@ public class FileEntity
 	public void setURI(String pURI) {
 		this.mURI = pURI;
 	}
-	
-	
-}
+}  // class FileEntity

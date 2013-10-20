@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.econcept.entities.User;
+import com.econcept.entity.User;
 import com.econcept.provider.UserProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
@@ -61,12 +61,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @Path("/user")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
-public class UserService 
+public class UserResource 
 {	
-	private final static Logger LOGGER = LoggerFactory.getLogger(UserService.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserResource.class);
 	
 	@Resource
-	UserProvider mUserService;
+	UserProvider mUserProvider;
 	
 	/**
 	 * Get the UserName from the SecurityContext
@@ -175,7 +175,7 @@ public class UserService
 			User lUser = new User();
 			lUser.setUserID(pUserID);
 			
-			mUserService.deleteUser(lUser);
+			mUserProvider.deleteUser(lUser);
 			
 			lBuilder = Response.status(Status.OK).entity("[]");
 		} // try
