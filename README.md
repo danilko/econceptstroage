@@ -132,6 +132,37 @@ Create PostgreSQL Cartridge and attached to above web cartridge
 rhc cartridge-add -a ${GEAR_NAME} -c postgresql-9.2
 ```
 
+Setup necessary environments for the application to work
+
+```
+#Setup necessary environments for the application to work
+rhc set-env -e DATA_DIR='${OPENSHIFT_REPO_DIR}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_DRIVERCLASSNAME=org.postgresql.Driver -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_MAXCONNECTIONPERPARTITION=8 -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_MINCONNECTIONPERPARTITION=2 -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_PASSWORD='${OPENSHIFT_POSTGRESQL_DB_PASSWORD}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_URL='jdbc:postgresql://${OPENSHIFT_POSTGRESQL_DB_HOST}:${OPENSHIFT_POSTGRESQL_DB_PORT}/${OPENSHIFT_APP_NAME}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_USERNAME='${OPENSHIFT_POSTGRESQL_DB_USERNAME}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+```
+
+List the environment variables to do final check
+
+```
+#List the environment variables to do final check
+rhc list-env -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+```
+
+It should be
+```
+DATA_DIR=${OPENSHIFT_REPO_DIR}
+JDBC_DRIVERCLASSNAME=org.postgresql.Driver
+JDBC_MAXCONNECTIONPERPARTITION=8
+JDBC_MINCONNECTIONPERPARTITION=2
+JDBC_PASSWORD=${OPENSHIFT_POSTGRESQL_DB_PASSWORD}
+JDBC_URL=jdbc:postgresql://${OPENSHIFT_POSTGRESQL_DB_HOST}:${OPENSHIFT_POSTGRESQL_DB_PORT}/${OPENSHIFT_APP_NAME}
+JDBC_USERNAME=${OPENSHIFT_POSTGRESQL_DB_USERNAME}
+```
+
 Create MongoDB Cartridge and attached to above web cartridge (Optional)
 
 ```
