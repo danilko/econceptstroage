@@ -136,7 +136,7 @@ Setup necessary environments for the application to work
 
 ```
 #Setup necessary environments for the application to work
-rhc set-env -e DATA_DIR='${OPENSHIFT_REPO_DIR}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e DATA_DIR='${OPENSHIFT_DATA_DIR}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
 rhc set-env -e JDBC_DRIVERCLASSNAME=org.postgresql.Driver -a ${GEAR_NAME} -p ${RHC_PASSWORD}
 rhc set-env -e JDBC_MAXCONNECTIONPERPARTITION=8 -a ${GEAR_NAME} -p ${RHC_PASSWORD}
 rhc set-env -e JDBC_MINCONNECTIONPERPARTITION=2 -a ${GEAR_NAME} -p ${RHC_PASSWORD}
@@ -314,7 +314,7 @@ rhc cartridge-add -a ${GEAR_NAME} -c postgresql-9.2
 rhc cartridge-add -a ${GEAR_NAME} -c mongodb-2.0
 
 #Setup necessary environments for the application to work
-rhc set-env -e DATA_DIR='${OPENSHIFT_REPO_DIR}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e DATA_DIR='${OPENSHIFT_DATA_DIR}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
 rhc set-env -e JDBC_DRIVERCLASSNAME=org.postgresql.Driver -a ${GEAR_NAME} -p ${RHC_PASSWORD}
 rhc set-env -e JDBC_MAXCONNECTIONPERPARTITION=8 -a ${GEAR_NAME} -p ${RHC_PASSWORD}
 rhc set-env -e JDBC_MINCONNECTIONPERPARTITION=2 -a ${GEAR_NAME} -p ${RHC_PASSWORD}
