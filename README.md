@@ -218,17 +218,9 @@ rhc app show ${GEAR_NAME}
 Example
 
 ```
-export SSH_PATH=sdfsa311sdafd4678@econcept-econceptstroage.local.openshift.com
+export SSH_PATH=`rhc app-show ${GEAR_NAME} -p ${RHC_PASSWORD} | grep SSH | sed -r s@SSH:@@g | tr -d ' '`
 ```
 
-Following is a real code
-
-```
-#SSH_PATH for the gear
-#Example
-#export SSH_PATH=sdfsa311sdafd4678@econcept-econceptstroage.local.openshift.com
-export SSH_PATH=sdfsa311sdafd4678@econcept-econceptstroage.local.openshift.com
-```
 
 Copy the SQL to the gear and execute it
 
@@ -281,24 +273,64 @@ git push origin master
 Example of Complete Script
 
 ```
+#RHC Account Password
+#Example
+#RHC_PASSWORD=sadf1DCBD
+RHC_PASSWORD=sadf1DCBD
+
+#GEAR Name
+#Example
+#GEAR_NAME=econept
+GEAR_NAME=econcept
+
 #Absolute path to the root folder that conatin this gitub project
 #Example
 #export SOURCE_GIT_REPO=/home/danilko/econceptstorage
 export SOURCE_GIT_REPO=/home/danilko/econceptstorage
 
+#Absolute path to the base directory
+
 #Absolute path to the root folder that contain the gear repo
 #Example
-#export GEAR_GIT_REPO=/home/danilko/econceptstorage_openshift
-export GEAR_GIT_REPO=/home/danilko/econceptstorage_openshift
+#export GEAR_GIT_REPO=/home/danilko/econcept
+export GEAR_GIT_REPO=/home/danilko/${GEAR_NAME}
 
-#SSH_PATH for the gear
-#Example
-#export SSH_PATH=sdfsa311sdafd4678@econcept-econceptstroage.local.openshift.com
-export SSH_PATH=sdfsa311sdafd4678@econcept-econceptstroage.local.openshift.com
+# If the folder does not exist, assume the gear does not exist, so create the gear
+if [ ! -d  ${GEAR_GIT_REPO} ];
+then
+
+mkdir -p ${GEAR_GIT_REPO}
+cd ${GEAR_GIT_REPO}
+cd ..
+rm -rf ${GEAR_NAME}
+
+#Create JBosses-2.0 gear
+rhc app create -a ${GEAR_NAME} -t jbossews-2.0
+
+#Add postgresql cartridge
+rhc cartridge-add -a ${GEAR_NAME} -c postgresql-9.2
+
+#Add mongodb cartridge (Optional)
+rhc cartridge-add -a ${GEAR_NAME} -c mongodb-2.0
+
+#Setup necessary environments for the application to work
+rhc set-env -e DATA_DIR='${OPENSHIFT_REPO_DIR}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_DRIVERCLASSNAME=org.postgresql.Driver -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_MAXCONNECTIONPERPARTITION=8 -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_MINCONNECTIONPERPARTITION=2 -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_PASSWORD='${OPENSHIFT_POSTGRESQL_DB_PASSWORD}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_URL='jdbc:postgresql://${OPENSHIFT_POSTGRESQL_DB_HOST}:${OPENSHIFT_POSTGRESQL_DB_PORT}/${OPENSHIFT_APP_NAME}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
+rhc set-env -e JDBC_USERNAME='${OPENSHIFT_POSTGRESQL_DB_USERNAME}' -a ${GEAR_NAME} -p ${RHC_PASSWORD}
 
 #Run econcept_ods.sql to generate necessary tables
 scp  ${SOURCE_GIT_REPO}/econcept_ods.sql ${SSH_PATH}:app-root/data/econcept_ods.sql
 ssh  ${SSH_PATH} "psql -f app-root/data/econcept_ods.sql; rm -rf app-root/data/econcept_ods.sql; exit;"
+fi
+
+#SSH_PATH for the gear
+#Example
+#export SSH_PATH=sdfsa311sdafd4678@econcept-econceptstroage.local.openshift.com
+export SSH_PATH=`rhc app-show ${GEAR_NAME} -p ${RHC_PASSWORD} | grep SSH | sed -r s@SSH:@@g | tr -d ' '`
 
 # Execute maven to package the war
 cd ${SOURCE_GIT_REPO}
