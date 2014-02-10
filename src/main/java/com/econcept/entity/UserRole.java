@@ -40,11 +40,15 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 @Entity
-@Table(name="user_roles")
+@Table(name="USER_ROLE")
 public class UserRole implements java.io.Serializable
 {
 	/**
@@ -53,52 +57,49 @@ public class UserRole implements java.io.Serializable
 	private static final long serialVersionUID = 721830185488417281L;
 
 	@Id
-	@Column(name = "user_role_id", nullable=false, unique=true, length=60)
+	@Column(name = "USER_ROLE_ID", nullable=false, unique=true)
 	private String user_role_id;
 	
-	@Column(name = "user_id", nullable=false, length=60)
-	private String user_id;
+	@ManyToOne(fetch=FetchType.LAZY)
+	@JoinColumn(name="USER_ID")
+	@JsonBackReference
+	private UserAccount user_account;
 	
-	@Column(name = "user_authority_id", nullable=false, length=60)
-	private String user_authority_id;
-	
-	@OneToOne(fetch=FetchType.LAZY)
-	@JoinColumn(name="user_id")
-	private User user;
-	
-	@OneToOne(fetch =FetchType.LAZY)
-	@JoinColumn(name="user_authority_id")
+	@OneToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="USER_AUTHORITY_ID")
+	@JsonManagedReference
 	private UserAuthority user_authority;
 	
+	/**
+	 * Get the user role id
+	 * @return String The user role id
+	 */
 	public String getUserRoleID() 
 	{
 		return user_role_id;
 	}  // String getUserRoleID
 
+	/**
+	 * Set the user role id
+	 * @param pUserRoleID The user role id
+	 */
 	public void setUserRole(String pUserRoleID) 
 	{
 		user_role_id = pUserRoleID;
 	}  // void setUserRoleID
 
-	public String getUserID() 
+	@JsonBackReference
+	public void setUserAccount(UserAccount pUserAccount)
 	{
-		return user_id;
-	}  // String getUserID
-
-	public void setUserID(String pUserID) 
+		user_account = pUserAccount;
+	}  // void setUser
+	
+	@JsonBackReference
+	public UserAccount getUserAccount()
 	{
-		user_id = pUserID;
-	}  // void setUserID
-
-	public String getUserAuthorityID() 
-	{
-		return user_authority_id;
-	}  //  String getUserAuthorityID
-
-	public void setUserAuthorityID(String pUserAuthorityID) {
-		user_authority_id = pUserAuthorityID;
-	}  //  void setUserAuthorityID
-
+		return user_account;
+	}  // void getUser
+	
 	public void setUserAuthority(UserAuthority pUserAuthority) 
 	{
 		user_authority=pUserAuthority;

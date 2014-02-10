@@ -3,3 +3,7 @@
 # available.  Otherwise it will execute while your application is stopped
 # before the deploy step.  This script gets executed directly, so it
 # could be python, php, ruby, etc.
+
+sed -i 's!##OPENSHIFT_REPO_DIR##!"'${OPENSHIFT_REPO_DIR}'"!' ${OPENSHIFT_REPO_DIR}/.openshift/config/logrotate.conf 
+
+sed -i 's!##OPENSHIFT_LOG_DIR##!"'${OPENSHIFT_JBOSSEWS_LOG_DIR}'"!' ${OPENSHIFT_REPO_DIR}/.openshift/cron/minutely/logrotate.minutely

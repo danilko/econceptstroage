@@ -1,4 +1,4 @@
-package com.econcept.provider;
+package com.econcept.dao.impl.base;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -11,23 +11,23 @@ import java.util.List;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.stereotype.Service;
 
-import com.econcept.entity.FileEntity;
+import com.econcept.dao.UserFileDAO;
+import com.econcept.entity.UserFile;
 
-@Service
-public class FileProvider {
+public class UserFileDAOBaseImpl implements UserFileDAO
+{
 	public final static String DATA_DIR = "DATA_DIR";
 
-	private final static Logger LOGGER = LoggerFactory.getLogger(FileProvider.class);
+	private final static Logger LOGGER = LoggerFactory.getLogger(UserFileDAOBaseImpl.class);
 	/**
 	 * Retrieve the account id with file list
 	 * 
 	 * @param pUserID
 	 *            The user ID to retrieve file list for
-	 * @return List <FileEntity> The files under current user
+	 * @return List <UserFile> The files under current user
 	 */
-	public List<FileEntity> getFileList(String pUserID) {
+	public List<UserFile> getFileList(String pUserID) {
 		try {
 			// Convert data dir to UNIX like path to eliminate possible errors
 			File lFolder = new File(getValue(DATA_DIR) + "/"
@@ -36,13 +36,13 @@ public class FileProvider {
 
 			// Retrieve all files from file lists
 			lFileList = lFolder.listFiles();
-			ArrayList<FileEntity> lFileEntities = new ArrayList<FileEntity>();
+			ArrayList<UserFile> lFileEntities = new ArrayList<UserFile>();
 			if (lFileList != null) {
 
 				// Only go through file list if file list itself is not null
 				for (File lFile : lFileList) {
-					FileEntity lFileEntity = new FileEntity(lFile);
-					lFileEntities.add(lFileEntity);
+					UserFile lUserFile = new UserFile(lFile);
+					lFileEntities.add(lUserFile);
 				} // for
 			} // if
 			return lFileEntities;
@@ -61,9 +61,8 @@ public class FileProvider {
 				+ "/" + pUserID + "/" + "/" + pFileName);
 	} // File getFile
 
-	public FileEntity saveFileWithURI(String pUserID, FileEntity pFileEntity)
-			throws Exception {
-		String [] lFilePathTokens = pFileEntity.getURI().split("/");
+	public UserFile saveFileWithURI(String pUserID, UserFile pUserFile) throws Exception {
+		String [] lFilePathTokens = pUserFile.getURI().split("/");
 		String lFilePath = getValue(DATA_DIR)
 				+ "/" + pUserID + "/" + "/" + lFilePathTokens[lFilePathTokens.length - 1];
 
@@ -71,25 +70,29 @@ public class FileProvider {
 		File lFile = new File(lFilePath);
 
 		// Set the URL to download files from
-		URL lURL = new URL(pFileEntity.getURI());
+		URL lURL = new URL(pUserFile.getURI());
 		FileUtils.copyURLToFile(lURL, lFile);
 
-		return new FileEntity(new File(lFilePath));
+		return new UserFile(new File(lFilePath));
 	} // File saveFileWithURI
 
-	public FileEntity saveFileWithInputStream(String pUserID, String pFileName, InputStream pInputStream)
-			throws Exception 
+	public UserFile saveFileWithInputStream(String pUserID, String pFileName, InputStream pInputStream) throws Exception 
 			{
 		String lFilePath = null;
+		
+		OutputStream lOutputStream = null;
+		
 		try
 		{
+			// Retrieve output stream through multipart data
+			lOutputStream = new FileOutputStream(lFilePath);
+			
 			lFilePath = getValue(DATA_DIR)
 					+ "/" + pUserID + "/" + "/" + pFileName;
 			
 			System.out.println(pFileName);
 			
-			// Retrieve output stream through multipart data
-			OutputStream lOutputStream = new FileOutputStream(lFilePath);
+
 			int lRead = 0;
 			// Set the upload threshold to 1 KB for every read
 			byte[] lBytes = new byte[1024];
@@ -101,18 +104,43 @@ public class FileProvider {
 			} // while
 
 			lOutputStream.flush();
-			lOutputStream.close();
 			
-			pInputStream.close();
-			
-			return new FileEntity(new File(lFilePath));
+			return new UserFile(new File(lFilePath));
 		} // try
 		catch(Exception pException)
 		{
 			LOGGER.debug(pException.toString());
-			throw pException;
+			throw new Exception("Error in file operation");
 		}  // catch
-	} // FileEntity saveFileWithInputStream
+		finally
+		{
+			if(lOutputStream != null)
+			{
+				try
+				{
+					lOutputStream.close();
+				}  // try
+				catch(Exception pException)
+				{
+					LOGGER.debug(pException.toString());
+					throw new Exception("Error in file operation");
+				}  // catch
+			}  // if
+			
+			if(pInputStream != null)
+			{
+				try
+				{
+					pInputStream.close();
+				}  // try
+				catch(Exception pException)
+				{
+					LOGGER.debug(pException.toString());
+					throw new Exception("Error in file operation");
+				}  // catch
+			}  // if
+		}  // finally
+	} // UserFile saveFileWithInputStream
 
 	/**
 	 * 

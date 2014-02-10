@@ -41,6 +41,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -51,71 +52,64 @@ import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 
 @Entity
-@Table(name="users")
-public class User implements UserDetails
+@Table(name="USER_ACCOUNT")
+public class UserAccount implements UserDetails
 {
 	/**
 	 * SerialVersionUID
 	 */
 	private static final long serialVersionUID = -4286123905019916530L;
 	
-	@JsonProperty("user_name")
-	@Column(name = "user_name", unique = true, nullable = false, length=60)
-	private String user_name;
-	
-	@JsonProperty("user_id")
 	@Id
-	@Column(name = "user_id", unique = true, nullable = false, length=60)
+	@Column(name = "USER_ID", unique = true, nullable = false)
 	private String user_id;
 	
-	@JsonProperty("first_name")
-	@Column(name = "first_name", unique = true, nullable = false, length=60)
+	@Column(name = "FIRST_NAME", unique = true, nullable = false)
 	private String first_name;
 	
-	@JsonProperty("last_name")
-	@Column(name = "last_name", unique = true, nullable = false, length=60)
+	@Column(name = "LAST_NAME", unique = true, nullable = false)
 	private String last_name;
 	
-	@JsonProperty("user_password")
-	@Column(name = "user_password", unique = true, nullable = false, length=60)
+	@Column(name = "USER_PASSWORD", unique = true, nullable = false)
 	private String user_password;
 	
-	@JsonProperty("email")
-	@Column(name = "email", unique = true, nullable = false, length=60)
+	@Column(name = "EMAIL", unique = true, nullable = false)
 	private String email;
 	
-	@Column(name = "user_non_locked", nullable = false, length=1)
+	@Column(name = "USER_NON_LOCKED", nullable = false)
 	private String user_non_locked;
 	
-	@Column(name = "credentials_expired", nullable = false, length=1)
+	@Column(name = "CREDENTIALS_EXPIRED", nullable = false)
 	private String credentials_expired;
 	
-	@Column(name = "user_non_expired", nullable = false, length=1)
+	@Column(name = "USER_NON_EXPIRED", nullable = false)
 	private String user_non_expired;
 	
-	@Column(name = "user_created_date", nullable = false, length=8)
+	@Column(name = "USER_CREATED_DATE", nullable = false)
 	private String user_created_date;
 	
-	@Column(name = "user_last_modified_date", nullable = false, length=8)
+	@Column(name = "USER_LAST_MODIFIED_DATE", nullable = false)
 	private String user_last_modified_date;
 	
-	@OneToMany(fetch = FetchType.LAZY, mappedBy="user")
-	private Set <UserRole> user_roles = new HashSet<UserRole>(0);
+	@OneToMany(mappedBy="user_account", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+	@JsonManagedReference
+	private Set <UserRole> user_roles;
 	
 	/**
 	 * Empty Constructor
 	 */
-	public User()
+	public UserAccount()
 	{
 	}  // User
 	
 	/**
 	 * Initialize basic variables
-	 * @param pUserName
 	 * @param pPassword
 	 * @param pFirstName
 	 * @param pLastName
@@ -126,9 +120,9 @@ public class User implements UserDetails
 	 * @param pAccountCreatedDate
 	 * @param pAccountLastModifiedDate
 	 */
-	public User(String pID, String pUserName, String pUserPassword, String pFirstName, String pLastName, String pEmail, String pAccountNonLocked, String pCredentialsNonExpired, String pAccountNonExpired, String pAccountCreatedDate, String pAccountLastModifiedDate)
+	public UserAccount(String pUserID, String pUserPassword, String pFirstName, String pLastName, String pEmail, String pAccountNonLocked, String pCredentialsNonExpired, String pAccountNonExpired, String pAccountCreatedDate, String pAccountLastModifiedDate)
 	{
-		user_name=pUserName;
+		user_id=pUserID;
 		user_password=pUserPassword;
 		first_name=pFirstName;
 		last_name=pLastName;
@@ -151,21 +145,6 @@ public class User implements UserDetails
 		user_id = pUserID;
 	}  // void setUserID
 	
-	public String getUsername() 
-	{
-		return user_name;
-	}  // String getUsername
-
-	public String getUserName() 
-	{
-		return user_name;
-	}  // String getUserName
-	
-	public void setUserName(String pUserserName) 
-	{
-		user_name = pUserserName;
-	}  // void setUserName
-	
 	public String getFirstName() 
 	{
 		return first_name;
@@ -186,6 +165,7 @@ public class User implements UserDetails
 		last_name = pLastName;
 	}  // void setLastName
 	
+	@JsonIgnore
 	public String getPassword() 
 	{
 		return user_password;
@@ -211,23 +191,17 @@ public class User implements UserDetails
 		email = pEmail;
 	}  // void setEmail
 	
+	@JsonIgnore
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
 		
 		List<GrantedAuthority> lAuthList = new ArrayList<GrantedAuthority>();
 		
-		if(user_id != null)
-		{
-			UserAuthority lUserAuthority = new UserAuthority();
-			lUserAuthority.setUserAuthorityName("ROLE_USER");
-			lAuthList.add(lUserAuthority);
-		}  // if
-		
-/*		for(UserRole lUserRole : user_roles)
+		for(UserRole lUserRole : user_roles)
 		{
 			lAuthList.add(lUserRole.getUserAuthority());
 		}  // for
-*/		
+		
 		return lAuthList;
 	}  // Collection<? extends GrantedAuthority> getAuthorities()
 
@@ -294,11 +268,13 @@ public class User implements UserDetails
 		return false;
 	}  // boolean isEnabled 
 	
+	@JsonManagedReference
 	public Set <UserRole> getUserRoles()
 	{
 		return user_roles;
 	}  // Set <UserRole> getUserRoles
 	
+	@JsonManagedReference
 	public void setUserRoles(Set <UserRole> pUserRoles)
 	{
 		user_roles = pUserRoles;
@@ -314,4 +290,15 @@ public class User implements UserDetails
 		
 		return user_id.hashCode();
 	}  // int hashCode
+
+	@Override
+	public String getUsername() 
+	{
+		return user_id;
+	}
+	
+	public void setUsername(String pUserID) 
+	{
+		user_id=pUserID;
+	}
 }  // class Account

@@ -47,7 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.econcept.entity.User;
+import com.econcept.entity.UserAccount;
 import com.econcept.provider.UserProvider;
 import com.fasterxml.jackson.databind.ObjectMapper;
 /**
@@ -72,30 +72,24 @@ public class UserResource
 	 * Get the UserName from the SecurityContext
 	 * @return String The UserName in the SecurityContext 
 	 */
-	private User getUser()
+	private UserAccount getUserAccount()
 	{
-		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return (UserAccount) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}  // String getUserName
 	
 	@GET
-	public Response getCXFSToken()
-	{
-		return Response.status(Status.OK).entity("[]").build();
-	}  // Response getCXFSToken
-	
-	@Path("/authenticate")
-	@POST
-	public Response authenticate()
+	public Response getUser()
 	{
 		ResponseBuilder lBuilder = null;
 		
 		try
 		{
-			User lUser = getUser();
+			UserAccount lUserAccount = getUserAccount();
 
 			ObjectMapper lMapper = new ObjectMapper();
 			
-			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(lUser));
+			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(lUserAccount));
+			LOGGER.debug(lMapper.writeValueAsString(lUserAccount));
 		}  // try
 		catch (Exception pException)
 		{
@@ -104,7 +98,7 @@ public class UserResource
 		} // catch
 		
 		return lBuilder.build();
-	}  // Response authenticate()
+	}  // Response getUser()
 	
 	/**
 	 * 
@@ -172,7 +166,7 @@ public class UserResource
 		
 		try
 		{
-			User lUser = new User();
+			UserAccount lUser = new UserAccount();
 			lUser.setUserID(pUserID);
 			
 			mUserProvider.deleteUser(lUser);

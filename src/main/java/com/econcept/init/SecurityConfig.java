@@ -34,7 +34,9 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -52,7 +54,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 	AuthenticationProvider mAuthenticationProvider;
 	
 	@Override
-	protected void registerAuthentication(AuthenticationManagerBuilder pAuth) throws Exception
+	protected void configure(AuthenticationManagerBuilder pAuth) throws Exception
 	{
 		pAuth
 			.authenticationProvider(mAuthenticationProvider);
@@ -67,8 +69,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 			
 			pHttpSecurity
 				.authorizeRequests()
-					.antMatchers("/rest/**").hasAuthority("ROLE_USER")
-					.and().httpBasic().authenticationEntryPoint(lEntryPoint);
+					.antMatchers("/rest/**").hasRole("USER")
+					.anyRequest().anonymous()
+					.and()
+					.formLogin();
+					
 		} // try
 		catch (Exception pException) 
 		{
@@ -76,4 +81,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter
 			throw new Exception(pException);
 		}  // catch
 	}  // void configure
+	
+	@Bean
+	@Override
+	public AuthenticationManager authenticationManagerBean() throws Exception
+	{
+		return super.authenticationManagerBean();
+	}
 }  // class SecurityConfig 

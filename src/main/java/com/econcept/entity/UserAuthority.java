@@ -43,7 +43,7 @@ import javax.persistence.Table;
 import org.springframework.security.core.GrantedAuthority;
 
 @Entity
-@Table(name="user_authorities")
+@Table(name="USER_AUTHORITY")
 public class UserAuthority implements GrantedAuthority
 {
 	/**
@@ -52,10 +52,10 @@ public class UserAuthority implements GrantedAuthority
 	private static final long serialVersionUID = 5867799148510937708L;
 
 	@Id
-	@Column(name="user_authority_id", nullable=false, unique=true, length=60)
+	@Column(name="USER_AUTHORITY_ID", nullable=false, unique=true)
 	private String user_authority_id;
 	
-	@Column(name="user_authority_name", nullable=false, unique=true, length=60)
+	@Column(name="USER_AUTHORITY_NAME", nullable=false, unique=true)
 	private String user_authority_name;
 
 	public String getUserAuthorityID() 

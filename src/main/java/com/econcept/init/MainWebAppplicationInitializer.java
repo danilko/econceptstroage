@@ -45,6 +45,8 @@ import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.support.AnnotationConfigWebApplicationContext;
 import org.springframework.web.filter.DelegatingFilterProxy;
 
+import com.econcept.filter.UnicodeFilter;
+
 public class MainWebAppplicationInitializer implements
 		WebApplicationInitializer {
 	@Override
@@ -62,7 +64,12 @@ public class MainWebAppplicationInitializer implements
 		lDispatcher.addMapping("/rest/*");
 		
 		// Apply Spring OAuthSecurity to both forward and request dispatcher
-		FilterRegistration.Dynamic lFilter = pContainer.addFilter("securityFilter",
+		FilterRegistration.Dynamic lFilter = pContainer.addFilter("unicodeFilter",
+				new UnicodeFilter());
+		lFilter.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD), true, "/*");
+		
+		// Apply Spring OAuthSecurity to both forward and request dispatcher
+		lFilter = pContainer.addFilter("securityFilter",
 				new DelegatingFilterProxy("springSecurityFilterChain"));
 		lFilter.addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST, DispatcherType.FORWARD), true, "/*");
 		

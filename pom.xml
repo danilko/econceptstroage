@@ -24,24 +24,15 @@
 				DEALINGS IN THE SOFTWARE. -->
 		</license>
 	</licenses>
-	<repositories>
-		<repository>
-			<id>spring-milestones</id>
-			<name>Spring Milestones</name>
-			<url>http://repo.spring.io/milestone</url>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
 	<properties>
 		<cxf.version>2.7.6</cxf.version>
 		<spring.version>3.2.2.RELEASE</spring.version>
-		<spring.security.version>3.2.0.M2</spring.security.version>
+		<spring.security.version>3.2.0.RELEASE</spring.security.version>
 		<openjpa.version>2.2.2</openjpa.version>
 		<jackson.version>2.2.3</jackson.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<log4j.version>1.2.17</log4j.version>
+		<encoding>UTF-8</encoding>
 	</properties>
 	<dependencies>
 		<!-- Spring Framework -->
@@ -103,16 +94,15 @@
 			<artifactId>spring-jdbc</artifactId>
 			<version>${spring.version}</version>
 		</dependency>
-
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-web</artifactId>
-			<version>3.2.0.RC1</version>
+			<version>${spring.security.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.security</groupId>
 			<artifactId>spring-security-config</artifactId>
-			<version>3.2.0.RC1</version>
+			<version>${spring.security.version}</version>
 		</dependency>
 
 		<!-- MONGODB -->

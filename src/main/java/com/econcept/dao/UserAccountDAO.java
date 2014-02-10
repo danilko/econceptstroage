@@ -32,8 +32,7 @@ package com.econcept.dao;
 
 import java.util.List;
 
-import com.econcept.entity.User;
-
+import com.econcept.entity.UserAccount;
 /**
  * 
  * @author Kai - Ting (Danil) Ko
@@ -41,7 +40,7 @@ import com.econcept.entity.User;
  * 
  */
 
-public interface UserDAO
+public interface UserAccountDAO
 {
 	/**
 	 * Create user and inputed into persistence storage
@@ -49,7 +48,7 @@ public interface UserDAO
 	 * @return User the object user added into persistence storage or null if fail
 	 * @Exception Exception when insert account into persistence storage
 	 */
-	public User addUser(User pUser) throws Exception;
+	public UserAccount addUser(UserAccount pUser) throws Exception;
 	
 	/**
 	 * Retrieve all users within persistence storage according to input information
@@ -57,19 +56,19 @@ public interface UserDAO
 	 * @return Accounts objects within persistence storage or null if there is nothing
 	 * @throws ClassCastException If object returns from persistence storage is not account object, this Exception will be thrown
 	 */
-	public List <User> getUsers(User pUser) throws ClassCastException;
+	public List <UserAccount> getUserByUserID(String pUserAccountID);
 	
 	/**
 	 * Update user with inputed information
-	 * @param pAccount User object within persistence storage that contains modified information
+	 * @param pAccount UserAccount object within persistence storage that contains modified information
 	 * @return User the object user is updated into persistence storage or null if fail
 	 * @throws ClassCastException If object returns from persistence storage is not account object, this Exception will be thrown
 	 */
-	public void updateUser(User pUser) throws ClassCastException;
+	public void updateUser(UserAccount pUserAccount) throws ClassCastException;
 	
 	/**
 	 * Delete user that has inputed id within persistence storage
 	 * @param pAccountID The account id for the account to be deleted from persistence storage
 	 */
-	public void deleteUser(User pUser);
+	public void deleteUser(UserAccount pUserAccount);
 }  // class UserDAO

@@ -39,11 +39,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor;
-import org.springframework.data.authentication.UserCredentials;
-import org.springframework.data.mongodb.MongoDbFactory;
-import org.springframework.data.mongodb.core.MongoOperations;
-import org.springframework.data.mongodb.core.MongoTemplate;
-import org.springframework.data.mongodb.core.SimpleMongoDbFactory;
 import org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.orm.jpa.JpaVendorAdapter;
@@ -51,15 +46,13 @@ import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
 import org.springframework.orm.jpa.vendor.OpenJpaVendorAdapter;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import com.econcept.dao.UserDAO;
-import com.econcept.dao.UserDAOImpl;
-import com.econcept.entity.User;
+import com.econcept.dao.UserAccountDAO;
+import com.econcept.dao.impl.base.UserAccountDAOBaseImpl;
+import com.econcept.entity.UserAccount;
 import com.econcept.entity.UserAuthority;
 import com.econcept.entity.UserRole;
 import com.econcept.webservice.rest.UserResource;
 import com.jolbox.bonecp.BoneCPDataSource;
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
 
 @Configuration
 @PropertySource(value="classpath:application.properties")
@@ -75,15 +68,15 @@ public class DAOConfig
 	}  // AccountService getAccountService
 
 	@Bean
-	public UserDAO getUserDAO()
+	public UserAccountDAO getUserDAO()
 	{
-		return new UserDAOImpl();
+		return new UserAccountDAOBaseImpl();
 	}  // AccountDAO getUserDAO
 
 	@Bean
-	public User getUser()
+	public UserAccount getUser()
 	{
-		return new User();
+		return new UserAccount();
 	}  // Account getUser
 	
 	@Bean
@@ -151,28 +144,4 @@ public class DAOConfig
 	{
 		return new PersistenceExceptionTranslationPostProcessor();
 	}  // PersistenceExceptionTranslationPostProcessor exceptionTranslation
-	
-/*	@Bean
-	public MongoDbFactory getMongoDBFactory() throws Exception
-	{
-		MongoClient lClient = new MongoClient(new ServerAddress(mEnvironment.getProperty("mongodb.host"), Integer.parseInt(mEnvironment.getProperty("mongodb.port"))));
-		UserCredentials lUserCredentials = new UserCredentials(mEnvironment.getProperty("mongodb.username"), mEnvironment.getProperty("mongodb.password"));
-		
-		SimpleMongoDbFactory lFactory = new SimpleMongoDbFactory(lClient, mEnvironment.getProperty("mongodb.dbname"), lUserCredentials);
-		
-		return lFactory;
-	}  // MongoDbFactory getMongoDBFactory
-	
-	@Bean
-	public MongoTemplate getMongoTemplate() throws Exception
-	{
-		return new MongoTemplate(getMongoDBFactory());
-	}  // MongoDbFactory getMongoDBFactory
-
-	@Bean
-	public MongoOperations getMongoOperations() throws Exception
-	{
-		return getMongoTemplate();
-	}  // MongoDbFactory getMongoDBFactory
-*/
 }  // DAOConfig

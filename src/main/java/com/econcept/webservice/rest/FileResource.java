@@ -52,9 +52,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import com.econcept.entity.FileEntity;
-import com.econcept.entity.User;
-import com.econcept.provider.FileProvider;
+import com.econcept.dao.impl.base.UserFileDAOBaseImpl;
+import com.econcept.entity.UserAccount;
+import com.econcept.entity.UserFile;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 
@@ -74,15 +74,15 @@ public class FileResource
 	private final static Logger LOGGER = LoggerFactory.getLogger(FileResource.class);
 	
 	@Resource
-	private FileProvider mFileProvider;
+	private UserFileDAOBaseImpl mFileProvider;
 	
 	/**
 	 * Get the User Object from the SecurityContext
 	 * @return User The User Object in the SecurityContext 
 	 */
-	private User getUser()
+	private UserAccount getUserAccount()
 	{
-		return (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+		return (UserAccount) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 	}  // String getUserName
 	
 	/**
@@ -101,7 +101,7 @@ public class FileResource
 		try
 		{
 			ObjectMapper lMapper = new ObjectMapper();
-			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileProvider.getFileList(getUser().getUserID())));
+			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileProvider.getFileList(getUserAccount().getUserID())));
 		} // try
 		catch (Exception pException)
 		{
@@ -130,7 +130,7 @@ public class FileResource
 		try
 		{
 			// Build the response and add file as part of the response
-			lBuilder = Response.status(Status.OK).entity((Object)mFileProvider.getFile(getUser().getUserID(), pFileName));
+			lBuilder = Response.status(Status.OK).entity((Object)mFileProvider.getFile(getUserAccount().getUserID(), pFileName));
 			lBuilder.header("Content-Disposition",
 					"attachment; filename=\"" + pFileName + "\"");
 			
@@ -161,7 +161,7 @@ public class FileResource
 		try
 		{
 			// Delete the file and return status
-			mFileProvider.deleteFile(getUser().getUserID(), pFileName);
+			mFileProvider.deleteFile(getUserAccount().getUserID(), pFileName);
 			lBuilder = Response.status(Status.OK).entity("[]");
 		}  // try
 		catch (Exception pException)
@@ -200,9 +200,9 @@ public class FileResource
 		try
 		{
 			ObjectMapper lMapper = new ObjectMapper();
-			FileEntity lFileEntity = lMapper.readValue(pMessage, FileEntity.class);
+			UserFile lFile = lMapper.readValue(pMessage, UserFile.class);
 			
-			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileProvider.saveFileWithURI(getUser().getUserID(), lFileEntity)));
+			lBuilder = Response.status(Status.OK).entity(lMapper.writeValueAsString(mFileProvider.saveFileWithURI(getUserAccount().getUserID(), lFile)));
 		}  // try
 		catch (Exception pException)
 		{
@@ -252,7 +252,7 @@ public class FileResource
 			
 			lBuilder = Response.status(Status.OK)
 					.entity(lMapper.writeValueAsString(
-							mFileProvider.saveFileWithInputStream(getUser().getUserID(), 
+							mFileProvider.saveFileWithInputStream(getUserAccount().getUserID(), 
 									pAttachment.getContentDisposition().getParameter("filename"),
 									pUploadedFileInputStream)));
 		}  // try

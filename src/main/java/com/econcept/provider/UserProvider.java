@@ -1,5 +1,6 @@
 package com.econcept.provider;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -11,80 +12,81 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
-import com.econcept.dao.UserDAO;
-import com.econcept.entity.User;
+import com.econcept.dao.UserAccountDAO;
+import com.econcept.entity.UserAccount;
 
 @Service
 public class UserProvider implements UserDetailsService
 {
 	@Resource
-	private UserDAO mUserDAO;
+	private UserAccountDAO mUserAccountDAO;
 	
 	private final static Logger LOGGER = LoggerFactory.getLogger(UserProvider.class);
 	
 	private final static int PASSWORD_MINIMUM_LENGTH = 8;
 	private final static int PASSWORD_MAXIMUM_LENGTH = 60;
 	
-	public List<User> getUserList()
+	public List<UserAccount> getUserList()
 	{
-			return mUserDAO.getUsers(null);
+			return mUserAccountDAO.getUserByUserID(null);
 	} // String getFileList
 	
-	public User updateUser(User pUser)
+	public UserAccount updateUser(UserAccount pUserAccount)
 	{
-		if(pUser == null)
+		if(pUserAccount == null)
 		{
 			return null;
 		}  // if
 		
 		// If it is an invalid user id, return null
-		if(pUser.getUserID() == null)
+		if(pUserAccount.getUserID() == null)
 		{
 			return null;
 		}  // if
 
 		// Only update if the object is valid
-		if(mUserDAO.getUsers(pUser).size() == 1)
+		if(mUserAccountDAO.getUserByUserID(pUserAccount.getUserID()) != null)
 		{
 			// Password cannot be empty
-			if(pUser.getPassword() == null)
+			if(pUserAccount.getPassword() == null)
 			{
 				return null;
 			}  // if
 			// Password cannot be less than 8 or greater than 60
-			if(pUser.getPassword().length() < PASSWORD_MINIMUM_LENGTH || pUser.getPassword().length() > PASSWORD_MINIMUM_LENGTH )
+			if(pUserAccount.getPassword().length() < PASSWORD_MAXIMUM_LENGTH || pUserAccount.getPassword().length() > PASSWORD_MINIMUM_LENGTH )
 			{
 				return null;
 			}  // if
 			
-			mUserDAO.updateUser(pUser);
+			mUserAccountDAO.updateUser(pUserAccount);
 			
-			return pUser;
+			return pUserAccount;
 		} // if
 
 		return null;
 	}  // void updateUser
 	
-	public void deleteUser(User pUser)
+	public void deleteUser(UserAccount pUserAccount)
 	{
-		mUserDAO.deleteUser(pUser);
+		// Only delete if the object is valid
+		List<UserAccount> lList = mUserAccountDAO.getUserByUserID(pUserAccount.getUserID());
+		
+		if(lList.size() > 0)
+		{
+			mUserAccountDAO.deleteUser(lList.get(0));
+		} // if
 	}  // void deleteUser
 
 	@Override
-	public UserDetails loadUserByUsername(String pUserName){
-		User lUser = new User();
-		lUser.setUserName(pUserName);
+	public UserDetails loadUserByUsername(String pUserAccountID){
+
+		// Only update if the object is valid
+		List<UserAccount> lList = mUserAccountDAO.getUserByUserID(pUserAccountID);
 		
-		List<User> lList = mUserDAO.getUsers(lUser);
-		
-		if(lList != null)
+		if(lList.size() > 0)
 		{
-			// Get the first one
-			if(lList.size() > 0)
-			{
-				return (User)lList.get(0);
-			}  // if
-		}  // if
+			return lList.get(0);
+		} // if
 		
 		LOGGER.debug("No match user found");
 		

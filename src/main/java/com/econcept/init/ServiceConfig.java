@@ -37,15 +37,15 @@ import org.springframework.security.authentication.dao.DaoAuthenticationProvider
 import org.springframework.security.authentication.dao.ReflectionSaltSource;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 
-import com.econcept.provider.FileProvider;
+import com.econcept.dao.impl.base.UserFileDAOBaseImpl;
 import com.econcept.provider.UserProvider;
 
 @Configuration
 public class ServiceConfig 
 {
 	@Bean
-	public FileProvider getFileProvider() {
-		return new FileProvider();
+	public UserFileDAOBaseImpl getFileProvider() {
+		return new UserFileDAOBaseImpl();
 	}  // FileProvider getFileProvider
 
 	@Bean
@@ -63,7 +63,7 @@ public class ServiceConfig
 		lEncoder.setIterations(1000);
 		
 		ReflectionSaltSource lSource = new ReflectionSaltSource();
-		lSource.setUserPropertyToUse("getUserName");
+		lSource.setUserPropertyToUse("getUserID");
 		
 		lProvider.setPasswordEncoder(lEncoder);
 		lProvider.setSaltSource(lSource);

@@ -34,7 +34,7 @@ import java.io.File;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public class FileEntity 
+public class UserFile
 {
 	@JsonProperty("fileName")
 	String mFileName;
@@ -48,11 +48,11 @@ public class FileEntity
 	@JsonProperty("uri")
 	String mURI;
 
-	public FileEntity()
+	public UserFile()
 	{
 	}  // FileEntity
 	
-	public FileEntity(File pFile)
+	public UserFile(File pFile)
 	{
 		mFileName = pFile.getName();
 		mLastModified = Long.toString(pFile.lastModified());
@@ -90,4 +90,4 @@ public class FileEntity
 	public void setURI(String pURI) {
 		this.mURI = pURI;
 	}
-}  // class FileEntity
+}  // class UserFile
